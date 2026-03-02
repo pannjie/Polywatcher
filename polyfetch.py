@@ -1,6 +1,8 @@
+import os
 import requests
 import datetime
 import statistics
+import uvicorn
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.staticfiles import StaticFiles
@@ -325,35 +327,16 @@ def analyse_relative_size(positions_data):
      
 
 
-#large buys placed within 6 hours of the market closing entirely. Suggesting insider knowledge giving them an advantage over non-insiders.
-def analyse_proximity(activity_data):
-    s = {}
-    t = {}
-    for activity in activity_data:
-        if activity.get('type') == "TRADE" and activity.get('side') == "BUY" and activity.get("cost") > 10000:
-            t.add(activity.get("timestamp"))
-            s.add(activity.get("conditionId"))
+# #large buys placed within 6 hours of the market closing entirely. Suggesting insider knowledge giving them an advantage over non-insiders.
+# def analyse_proximity(activity_data):
+#     s = {}
+#     t = {}
+#     for activity in activity_data:
+#         if activity.get('type') == "TRADE" and activity.get('side') == "BUY" and activity.get("cost") > 10000:
+#             t.add(activity.get("timestamp"))
+#             s.add(activity.get("conditionId"))
 
-    #loop th
-
-
-
-        
-
-    
-
-
-
-
-    
-
-            
-            
-    
-   
-
-
-    
+    #l
     
 
 
@@ -384,6 +367,5 @@ def analyse_user_2():
     pass
 
 if __name__ == "__main__":
-    print("=== Market Search ===\n")
-    get_creator("0x033025f6cede59b115a49446d0208586ba47eb8f")
-    get_activity("0x033025f6cede59b115a49446d0208586ba47eb8f")
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("polyfetch:app", host="0.0.0.0", port=port)
