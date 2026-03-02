@@ -1,0 +1,101 @@
+title,outcome,size,avgPrice,initialValue,currentValue,cashPnl,percentPnl,realizedPnl,curPrice,endDate,redeemable,eventSlug
+Will Trump nominate Judy Shelton as the next Fed chair?,No,1000,0.979,979,969.5,-9.5,-0.9703,0,0.9695,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+AI model scores ≥ 90% on FrontierMath Benchmark before 2027?,No,1000,0.8425,842.503,875,32.4969,3.8571,-9.9875,0.875,2026-12-31,False,ai-model-scores-90-on-frontiermath-benchmark-before-2027
+"Will the US not strike Iran by February 28, 2026?",Yes,600,0.88,528,525,-3,-0.5681,0,0.875,2026-02-28,False,us-next-strikes-iran-on-843
+"Will US or Israel strike Iran by February 28, 2026?",No,400,0.875,350,350,0,0,0,0.875,2026-12-31,False,usisrael-strikes-iran-by
+Will the 2026 Bad Bunny Super Bowl halftime show video get at least 150M views in its first 7 days?,No,375.3053,0.9008,338.0972,375.1177,37.0204,10.9496,0,0.9995,2026-02-15,False,of-views-on-bad-bunny-halftime-show-youtube-in-week-1
+Will Russia enter Zaporizhia by June 30?,No,283.31,0.86,243.6466,245.0631,1.4164,0.5813,0,0.865,2026-06-30,False,which-cities-will-russia-enter-by-june-30
+Will the 2026 Bad Bunny Super Bowl halftime show video get between 125M and 150M views in its first 7 days?,No,230,0.8679,199.6296,229.885,30.2553,15.1557,0,0.9995,2026-02-15,False,of-views-on-bad-bunny-halftime-show-youtube-in-week-1
+"US strikes Iran by February 28, 2026?",No,200,0.89,178,177,-1,-0.5617,12,0.885,2026-01-31,False,us-strikes-iran-by
+Will Russia enter Dopropillia by June 30?,No,271.38,0.42,113.9796,118.0503,4.0707,3.5714,0,0.435,2026-06-30,False,which-cities-will-russia-enter-by-june-30
+Will Russia capture all of Vovchansk by March 31?,No,150,0.6933,103.9999,108.75,4.75,4.5673,0,0.725,2025-12-31,False,will-russia-capture-all-of-vovchansk-by
+Will JD Vance win the 2028 US Presidential Election?,Yes,400,0.245,98,97.8,-0.2,-0.204,0,0.2445,2028-11-07,False,presidential-election-winner-2028
+Will Russia capture all of Huliaipole by February 28?,No,179.61,0.5154,92.5876,129.3192,36.7315,39.6721,32.2014,0.72,2026-02-28,False,will-russia-capture-all-of-huliaipole-by-february-28
+Will Russia capture all of Rodynske by March 31?,No,183.22,0.48,87.9456,122.7574,34.8118,39.5833,0,0.67,2026-03-31,False,will-russia-capture-all-of-rodynske-by
+Puffpaw FDV above $200M one day after launch?,No,100,0.807,80.7,85.5,4.7999,5.9478,0,0.855,2027-01-01,False,puffpaw-fdv-above-one-day-after-launch
+Will Seguro win all of Portugal's districts?,Yes,100,0.79,79,99.8,20.7999,26.3289,0,0.998,2026-02-08,False,will-seguro-win-all-of-portugals-districts
+Epstein or Maxwell confirmed Mossad operatives by June 30?,No,85.9166,0.88,75.6066,79.0433,3.4366,4.5453,0,0.92,2026-06-30,False,epstein-or-maxwell-confirmed-mossad-operatives-by-june-30
+María Corina Machado enter Venezuela by March 31?,No,100,0.72,72,77.5,5.5,7.6388,0,0.775,2026-01-31,False,will-mara-corina-machado-enter-venezuela-by-january-31
+Will Graham Platner be the Democratic nominee for Senate in Maine?,No,200,0.35,70,68.9799,-1.02,-1.4571,15.3358,0.3449,2026-07-31,False,maine-democratic-senate-primary-winner
+Will Alphabet be the largest company in the world by market cap on January 31?,Yes,3147.1109,0.022,69.249,0,-69.249,-99.9999,0,0,2026-01-31,True,largest-company-end-of-january
+Mercedes be the 2026 F1 Constructors' Champion?,Yes,140,0.43,60.2,58.8,-1.3999,-2.3254,0,0.42,2026-12-06,False,f1-constructors-champion
+Will António José Seguro win the second round by 0–10%?,No,60,0.956,57.36,59.97,2.6099,4.55,0,0.9995,2026-02-08,False,portugal-presidential-election-margin-of-victory-second-round
+"Will Russia capture Kostyantynivka by December 31, 2026?",No,415,0.1268,52.6493,58.1,5.4506,10.3526,0,0.14,2026-12-31,False,will-russia-capture-kostyantynivka-by
+Will Trump nominate Christopher Waller as the next Fed chair?,Yes,400,0.1259,50.3992,0.6,-49.7992,-98.8095,-5.1099,0.0015,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+Will Marco Rubio win the 2028 US Presidential Election?,Yes,677.27,0.0742,50.2818,53.5043,3.2224,6.4086,0,0.079,2028-11-07,False,presidential-election-winner-2028
+Zohran Mamdani win by 10-20%?,Yes,100,0.4399,43.9998,0,-43.9998,-99.9997,0,0,2025-11-04,True,zohran-mamdani-margin-of-victory-in-2025-new-york-city-mayoral-election
+Will Russia capture all of Rodynske by February 28?,No,50,0.8139,40.6999,45.75,5.05,12.4078,0,0.915,2026-03-31,False,will-russia-capture-all-of-rodynske-by
+Will NVIDIA be largest company by market cap on January 31?,No,999.9636,0.0387,38.7575,0,-38.7575,-99.9997,0,0,2026-01-31,True,largest-company-end-of-january
+"Will France, UK, or Germany strike Iran by February 28?",Yes,1260.3614,0.0301,37.9633,19.5356,-18.4277,-48.5407,-2.1373,0.0155,2026-02-28,False,will-france-uk-or-germany-strike-iran-by-february-28
+Quentin Tarantino named in Epstein files by March 31?,No,60,0.6066,36.3999,0,-36.3999,-99.9998,0,0,2026-03-31,True,who-will-be-named-in-newly-released-epstein-files-by-march-31
+"Thailand strikes Cambodia by June 30, 2026?",No,80,0.4499,35.9999,66.3999,30.3999,84.4443,0,0.83,2026-06-30,False,thailand-strikes-cambodia-by-966
+Will McLaren be the 2026 F1 Constructors' Champion?,Yes,140.32,0.2414,33.8799,32.2736,-1.6063,-4.7411,0,0.23,2026-12-06,False,f1-constructors-champion
+Will CDU win 2nd most seats in 2026 Rhineland-Palatinate?,Yes,100,0.32,32,32.5,0.5,1.5625,0,0.325,2026-03-22,False,rheinland-pfalz-parliamentary-election-2nd-place
+Barack Obama named in Epstein files by March 31?,No,70,0.4571,31.9999,0,-31.9999,-99.9998,0,0,2026-03-31,True,who-will-be-named-in-newly-released-epstein-files-by-march-31
+"Will Russia capture Lyman by March 31, 2026?",No,50,0.6139,30.6999,36.5,5.8,18.8925,0,0.73,2025-12-31,False,will-russia-capture-lyman-in-2025
+Will Russia capture all of Pokrovsk by March 31?,No,99.9961,0.3019,30.1987,37.4985,7.2997,24.1721,0,0.375,2025-09-30,False,will-russia-capture-all-of-pokrovsk-by-september-30
+Will Jordan Bardella win the 2027 French presidential election?,Yes,99.985,0.29,28.9956,27.4958,-1.4998,-5.1724,0,0.275,2027-04-30,False,next-french-presidential-election
+Will Max Verstappen finish third in 2025 F1?,Yes,73.78,0.3852,28.4222,0,-28.4222,-99.9997,1.0505,0,2025-12-07,True,f1-drivers-champion-3rd-place
+Joe Biden named in Epstein files by March 31?,No,50,0.5,25,0,-25,-100,0,0,2026-03-31,True,who-will-be-named-in-newly-released-epstein-files-by-march-31
+Zelenskyy meet with Netanyahu in 2025?,Yes,181.81,0.1289,23.4523,0,-23.4523,-99.9995,0,0,2025-12-31,True,will-zelenskyy-meet-with-netanyahu-in-2025
+Will Trump talk to Nicolás Maduro in December?,Yes,200,0.115,23,0,-23,-100,0,0,2025-12-31,True,who-will-trump-talk-to-in-december
+Xi Jinping out by June 30?,Yes,720,0.0314,22.6778,25.2,2.5221,11.1214,0,0.035,2026-06-30,False,xi-jinping-out-by
+Will Trump nominate Kevin Hassett as the next Fed chair?,Yes,400,0.0564,22.5996,1,-21.5996,-95.5751,4.4,0.0025,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+Ukraine Tomahawk missile strike by December 31?,Yes,210.4582,0.1009,21.2365,0,-21.2365,-99.9999,2.5507,0,2025-12-31,True,ukraine-tomahawk-strike-by-december-31
+Will Franco Parisi come in fourth in Chile?,Yes,60,0.35,21,0,-21,-100,0,0,2025-11-16,True,chile-presidential-election-1st-round-4th-place
+Will there be at least 2050 measles cases in the U.S. in 2025?,No,153,0.1208,18.4898,0,-18.4898,-99.9994,0,0,2025-12-31,True,measles-cases-in-us-before-2026
+Will Evelyn Matthei come in fourth in Chile?,Yes,60,0.3,18,0,-18,-100,0,0,2025-11-16,True,chile-presidential-election-1st-round-4th-place
+Fed increases interest rates by 25+ bps after January 2026?,Yes,1144.45,0.014,16.0223,0,-16.0223,-100,0,0,2026-01-28,True,fed-decision-in-january
+Ukraine strikes another tanker in Black Sea by December 19?,Yes,100,0.16,16,0,-16,-100,0,0,2025-12-31,True,ukraine-strikes-another-tanker-in-black-sea-by
+Will NVIDIA be largest company by market cap on February 28?,No,473.0841,0.033,15.6538,13.2463,-2.4075,-15.3795,0,0.028,2026-02-28,False,largest-company-end-of-february
+"Will Bitcoin reach $120,000 by December 31, 2025?",Yes,50,0.308,15.4,0,-15.4,-100,0,0,2026-01-01,True,what-price-will-bitcoin-hit-in-2025
+Honduran election by less than 1%?,No,100,0.153,15.3,0,-15.3,-100,0,0,1970-01-01,True,honduras-presidential-election-margin-of-victory-new-strikes-192
+Will NVIDIA be largest company by market cap on March 31?,No,99.9808,0.15,14.9971,13.9973,-0.9998,-6.6666,0,0.14,2026-03-31,False,largest-company-end-of-march-588
+US x Venezuela military engagement by December 31?,Yes,200,0.066,13.2,0,-13.2,-99.9999,0,0,2025-12-31,True,us-x-venezuela-military-engagement-by
+Will Apple be largest company by market cap on January 31?,Yes,100,0.13,13,0,-13,-100,0,0,2026-01-31,True,largest-company-end-of-january
+Zohran Mamdani win by 15–20%?,Yes,60,0.2116,12.6999,0,-12.6999,-100,0,0,2025-11-04,True,zohran-mamdani-margin-of-victory-smaller-brackets
+Putin out as President of Russia in 2025?,Yes,400,0.03,12,0,-12,-100,0,0,2025-12-31,True,putin-out-as-president-of-russia-in-2025
+Henry Kissinger named in Epstein files by March 31?,No,50,0.24,12,0,-12,-100,0,0,2026-03-31,True,who-will-be-named-in-newly-released-epstein-files-by-march-31
+Will Mark Kelly win the 2028 Democratic presidential nomination?,Yes,495.2569,0.0241,11.9673,10.1527,-1.8146,-15.1628,5.9638,0.0205,2028-11-07,False,democratic-presidential-nominee-2028
+Apple largest company by market cap on December 31?,Yes,62.25,0.1703,10.6065,0,-10.6065,-99.9991,0,0,2025-12-31,True,largest-company-end-of-2025
+Diosdado Cabello leader of Venezuela end of 2026?,Yes,520,0.0199,10.3989,9.6199,-0.779,-7.4911,0,0.0185,2026-12-31,False,venezuela-leader-end-of-2026
+Khamenei out as Supreme Leader of Iran by March 31?,Yes,60,0.1516,9.0999,8.1,-0.9999,-10.988,34.4,0.135,2026-03-31,False,khamenei-out-as-supreme-leader-of-iran-by-march-31
+Pope Leo XIV in Google's Top 5 Most Searched 2025?,No,64.91,0.123,7.9872,0,-7.9872,-99.9994,0,0,2025-12-31,True,top-5-most-searched-people-on-google-2025
+Canada participate in Eurovision 2026?,Yes,100,0.07,7,0,-7,-99.9999,0,0,2025-12-31,True,eurovision-2026-participants
+Will Trump meet with Zelenskyy by December 31?,No,168.6254,0.0381,6.4408,0,-6.4408,-99.9997,2.64,0,2025-12-31,True,will-trump-meet-with-zelenskyy-by
+Netherlands participate in Eurovision 2026?,Yes,200,0.0315,6.3,0,-6.3,-100,0,0,2025-12-31,True,eurovision-2026-participants
+Epstein client list released in 2025?,Yes,70,0.085,5.95,0,-5.95,-100,0,0,2025-12-31,True,epstein-client-list-released-in-2025-372
+Elon Musk #1 searched person on Google?,Yes,99.9905,0.0477,4.7794,0,-4.7794,-99.999,0,0,2025-12-31,True,1-searched-person-on-google-this-year
+Will Trump talk to Elon Musk in December?,Yes,70.5352,0.0669,4.7201,0,-4.7201,-99.999,0,0,2025-12-31,True,who-will-trump-talk-to-in-december
+Alphabet largest company by market cap on December 31?,Yes,199.9987,0.0224,4.4995,0,-4.4995,-99.9984,0,0,2025-12-31,True,largest-company-end-of-2025
+Witkoff meet with Iranian officials by February 28?,No,850.1777,0.005,4.3001,0,-4.3001,-99.9977,-91.1176,0,2026-02-28,True,will-witkoff-meet-with-iranian-officials-by-february-28
+Israel strikes Iran by November 30?,Yes,104.05,0.0389,4.0485,0,-4.0485,-99.9978,0,0,2025-11-30,True,israel-strikes-iran-by
+Israel x Hamas ceasefire cancelled by December 31?,Yes,100,0.04,4,0,-4,-100,0,0,2025-12-31,True,israel-x-hamas-ceasefire-cancelled-by-october-31
+Trump agrees to sell F-35 to Saudi Arabia by November 30?,No,421.1331,0.0094,3.9847,0,-3.9847,-99.9984,9.5818,0,2025-11-30,True,trump-agrees-to-sell-f-35-to-saudi-arabia-by-november-30
+Will Audi be the 2026 F1 Constructors' Champion?,Yes,200,0.019,3.8,1.7,-2.1,-55.2631,0,0.0085,2026-12-06,False,f1-constructors-champion
+Will Trump nominate David Malpass as the next Fed chair?,Yes,1785,0.002,3.57,0.8925,-2.6775,-75,0,0.0005,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+Spain participate in Eurovision 2026?,Yes,100,0.034,3.4,0,-3.4,-99.9999,0,0,2025-12-31,True,eurovision-2026-participants
+Will Williams be 2026 F1 Constructors' Champion?,Yes,161.5529,0.02,3.231,4.2003,0.9692,29.9963,0,0.026,2026-12-06,False,f1-constructors-champion
+Russia capture Huliaipole by January 31?,No,350.04,0.0076,2.6666,0,-2.6666,-99.9998,-0.5512,0,2025-12-31,True,will-russia-capture-huliaipole-by-december-31
+No change in Fed interest rates after December 2025?,Yes,100,0.026,2.6,0,-2.6,-100,0,0,2025-12-10,True,fed-decision-in-december
+Dilan Yeşilgöz-Zegerius next PM of Netherlands?,Yes,165.21,0.013,2.1477,0.413,-1.7347,-80.7689,0,0.0025,2026-12-31,False,next-prime-minister-of-the-netherlands
+Cadillac be 2026 F1 Constructors' Champion?,Yes,213.6331,0.01,2.1363,1.2817,-0.8546,-40.0031,0,0.006,2026-12-06,False,f1-constructors-champion
+Xi Jinping be TIME's Person of the Year 2025?,Yes,69.9981,0.03,2.0999,0,-2.0999,-99.9979,0,0,2025-12-31,True,time-2025-person-of-the-year
+Hezbollah disarm in 2025?,Yes,100,0.0209,2.0999,0,-2.0999,-99.9952,1.7302,0,2025-12-31,True,will-hezbollah-to-disarm-before-in-2025
+Ilhan Omar marry her brother?,Yes,59.9927,0.0303,1.8197,0,-1.8197,-99.9967,0,0,2025-12-31,True,fact-check-did-ilhan-omar-marry-her-brother
+Trump nominate no one before 2027?,Yes,502.018,0.0033,1.6677,2.008,0.3402,20.3993,0,0.004,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+Vladimir Padrino López leader of Venezuela end of 2026?,Yes,100,0.014,1.4,1.9,0.4999,35.7071,0,0.019,2026-12-31,False,venezuela-leader-end-of-2026
+"Bitcoin reach $120,000 in November?",Yes,59.9946,0.0209,1.2598,0,-1.2598,-99.993,0,0,2025-12-01,True,what-price-will-bitcoin-hit-in-november-2025
+U.S. forces seize Venezuela-linked oil ship by December 26?,Yes,200,0.006,1.2,0,-1.2,-100,0,0,2025-12-31,True,us-forces-seize-another-venezuela-linked-oil-ship-in-2025-451
+Slovenia participate in Eurovision 2026?,Yes,100,0.012,1.2,0,-1.2,-100,0,0,2025-12-31,True,eurovision-2026-participants
+Iceland participate in Eurovision 2026?,Yes,100,0.011,1.0999,0,-1.0999,-99.9909,0,0,2025-12-31,True,eurovision-2026-participants
+Ireland participate in Eurovision 2026?,Yes,100,0.011,1.0999,0,-1.0999,-99.9909,0,0,2025-12-31,True,eurovision-2026-participants
+Honduran election win by 2-3%?,Yes,336.8016,0.0031,1.0727,0,-1.0727,-99.9987,71.6889,0,1970-01-01,True,honduras-presidential-election-margin-of-victory-new-strikes-192
+Trump talk to Xi Jinping in December?,Yes,200,0.005,1,0,-1,-100,0,0,2025-12-31,True,who-will-trump-talk-to-in-december
+Daniil Dubov win 2025 FIDE World Blitz?,Yes,1000,0.001,1,0,-1,-100,0,0,2025-12-30,True,2025-fide-world-blitz-championship-winner
+Eight die in Stranger Things Season 5?,No,418.9131,0.002,0.839,0,-0.839,-99.9901,-0.2997,0,2025-12-31,True,who-will-die-in-stranger-things-season-5
+Sam Altman be TIME's Person of the Year 2025?,Yes,100,0.0072,0.7207,0,-0.7207,-100,200.0292,0,2025-12-31,True,time-2025-person-of-the-year
+Trump talk to Kim Jong Un in December?,Yes,106.6388,0.006,0.6398,0,-0.6398,-99.9948,0,0,2025-12-31,True,who-will-trump-talk-to-in-december
+Trump nominate Lorie K. Logan as next Fed chair?,Yes,590.46,0.001,0.5904,0.2952,-0.2952,-49.9949,0,0.0005,2026-12-31,False,who-will-trump-nominate-as-fed-chair
+Trump and Putin meet next in China?,Yes,76,0.005,0.38,2.926,2.546,669.9999,0,0.0385,2026-06-30,False,where-will-trump-and-putin-meet-next-584
+Chile presidential election turnout at least 90%?,Yes,100,0.003,0.3,0,-0.3,-100,0,0,2026-03-31,True,turnout-in-chile-presidential-election-second-round

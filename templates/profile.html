@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ creator.get("name", title) }}</h1>
+      <table border="1" cellpadding="5" cellspacing="0">
+        <tr><td><strong>Username</strong></td><td>{{ creator.get("pseudonym", "") }}</td></tr>
+        <tr><td><strong>Bio</strong></td><td>{{ creator.get("bio", "") }}</td></tr>
+        <tr><td><strong>Wallet</strong></td><td>{{ creator.get("proxyWallet", "") }}</td></tr>
+        <tr><td><strong>Joined</strong></td><td>{{ creator.get("createdAt", "")[:10] }}</td></tr>
+        <tr><td><strong>Profile Image</strong></td><td>{% if creator.get("profileImage") %}<img src="{{ creator.profileImage }}" width="100" height="100">{% endif %}</td></tr>
+      </table>
+      <p><a href="/">Back to search</a></p>
+
+      <div>
+        <h2>Analysis Parameters</h2>
+        <h4>Market Spread: {{ spread_analysis }}</h4>
+        <h4>Throwaway account: {{ time_gap }}</h4>
+        <h4>Volume analysis: {{ volume_analysis }}</h4>
+        <h4>Profit/loss analysis: {{ profit_analysis }}</h4>
+        <h4>Success_rate: {{ success_rate }}</h4>
+        <h4>High-frequency trades: {{ high_frequency }}</h4>
+        <h4>Relative size: {{ profit_size }} </h4>
+        <h4>Market size deviation: </h4>
+        <h4>Unusual stability: </h4>
+        <h4>Exceptional earnings: </h4>
+        <!-- requires cloudscraper/playwright/beautifulsoup -->
+      </div>
+
+      
+
+      <h2>Activity</h2>
+      {% if activity %}
+      <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Market</th>
+            <th>Type</th>
+            <th>Timestamp</th>
+            <th>Side</th>
+            <th>Outcome</th>
+            <th>Size</th>
+            <th>Cost (USDC)</th>
+            <th>Price</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for trade in activity %}
+          <tr>
+            <td>{{ trade.title }}</td>
+            <td>{{ trade.type }}</td>
+            <td>{{ trade.timestamp }}</td>
+            <td>{{ trade.side }}</td>
+            <td>{{ trade.outcome }}</td>
+            <td>{{ trade.size }}</td>
+            <td>{{ trade.cost }}</td>
+            <td>{{ trade.price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>No activity found.</p>
+      {% endif %}
+
+      <h2>Positions</h2>
+      {% if positions %}
+      <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Market</th>
+            <th>Outcome</th>
+            <th>Size</th>
+            <th>Average Price</th>
+            <th>Current Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pos in positions %}
+          <tr>
+            <td>{{ pos.get("title", "") }}</td>
+            <td>{{ pos.get("outcome", "") }}</td>
+            <td>{{ pos.get("size", "") }}</td>
+            <td>{{ pos.get("avgPrice", "") }}</td>
+            <td>{{ pos.get("currentValue", "") }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>No positions found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
+
+
+<!-- if there is a positive is closed, the curprice is 0 -->
+<!-- is there a way to display their total profits and losses over time? -->

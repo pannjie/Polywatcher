@@ -1,0 +1,389 @@
+import requests
+import datetime
+import statistics
+
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+
+#use polygonscan's free api?
+#use goldsky subgraphQL
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+GAMMA_API = "https://gamma-api.polymarket.com"
+DATA_API = "https://data-api.polymarket.com"
+GOLDSKY_URL = "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/pnl-subgraph/0.0.14/gn"
+# Most likely it's the Goldsky subgraph cold start. The first query to the subgraph takes longer as it warms up. If it exceeds your 30-second timeout, it throws a ReadTimeout, which gets caught by your except Exception and returns an error page. Subsequent queries are faster because the subgraph is already warm.
+
+# You could either increase the timeout or add a simple retry:
+
+
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse(request, "search.html", {"title": "Lookup"})
+
+@app.get("/user/{address}")
+def user_profile(request: Request, address: str):
+    try:
+        #call api
+        creator_data = get_creator(address)
+        activity_data, activity_raw = get_activity(address)
+        positions_data = get_positions(address)
+        redemptions_data = get_redemptions(address)
+        pnl_data = get_pnl(address)
+        # market_data = get_markets(activity_raw)
+
+
+        #analyse data
+        spread_analysis = analyse_spread(positions_data)
+        time_gap = get_timegap(redemptions_data, creator_data)
+        volume_analysis = analyse_volume(positions_data, redemptions_data)
+        profit_analysis = analyse_profits(pnl_data)
+        success_rate = analyse_success(pnl_data)
+        high_frequency = high_frequency_check(activity_data)
+        profit_size = analyse_relative_size(positions_data)
+
+
+        # print(profit_size)
+        return templates.TemplateResponse(request, "profile.html", {
+            "title": creator_data.get("name", address),
+            "spread_analysis": spread_analysis,
+            "time_gap": time_gap,
+            "volume_analysis": volume_analysis,
+            "profit_analysis": profit_analysis,
+            "success_rate": success_rate,
+            "high_frequency": high_frequency,
+            "profit_size": profit_size,
+            "creator": creator_data,
+            "activity": activity_data,
+            "positions": positions_data,
+            "redemptions": redemptions_data
+        })
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
+
+@app.get("/api/user/{address}")
+def user_raw(address: str):
+    try:
+        return {
+            "creator": get_creator(address),
+            "activity": get_activity(address),
+            "positions": get_positions(address),
+            "redemptions": get_redemptions(address),
+            "pnl": get_pnl(address)
+
+        }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
+
+
+def get_creator(address):
+    res = requests.get(f"{GAMMA_API}/public-profile", params={"address": address})
+    res.raise_for_status()
+    data = res.json()
+
+    return data
+       
+def get_redemptions(user):
+    res = requests.get(f"{DATA_API}/activity", params={"user": user, "type": "REDEEM", "limit": 1000})
+    res.raise_for_status()
+    data = res.json()
+
+    return data
+
+
+def get_activity(user, limit=1000):
+    res = requests.get(f"{DATA_API}/activity", params={"user": user, "limit": limit})
+    res.raise_for_status()
+    data = res.json()
+
+    trades = []
+    for item in data:
+        trades.append({
+            'title': item.get('title'),
+            'timestamp': item.get('timestamp'),
+            'market': item.get('conditionId'),   
+            'slug': item.get('slug'),
+            'side': item.get('side'),
+            'outcome': item.get('outcome'),
+            'size': item.get('size'),
+            'cost': item.get('usdcSize'),
+            'price': item.get('price'),
+            'type': item.get('type'),
+        })
+        
+    return trades, data
+
+
+# def get_markets(activity_raw,  limit=1000):
+#     for activity in activity_raw:
+#         market_id = activity.get('conditionId')
+    
+
+
+#     res = requests.get(f"{GAMMA_API}/markets", params={"marketId": market_id, "limit": limit})
+#     res.raise_for_status()
+#     data = res.json()
+#     return data
+
+
+
+def get_positions(user, limit=1000):
+    res = requests.get(f"{DATA_API}/positions", params={"user": user, "limit": limit})
+    res.raise_for_status()
+    data = res.json()
+    return data
+
+def get_pnl(address):
+    all_positions = []
+    skip = 0
+    batch_size = 100
+
+    while True:
+        query = """
+        {
+          userPositions(
+            where: { user: "%s" }
+            first: %d
+            skip: %d
+          ) {
+            tokenId
+            amount
+            avgPrice
+            realizedPnl
+            totalBought
+          }
+        }
+        """ % (address.lower(), batch_size, skip)
+
+        res = requests.post(GOLDSKY_URL, json={"query": query}, timeout=30)
+        res.raise_for_status()
+        result = res.json()
+        if "data" not in result or result["data"] is None:
+            print(f"GOLDSKY ERROR: {result}")
+            break
+
+        positions = result["data"]["userPositions"]
+        all_positions.extend(positions)
+
+        if len(positions) < batch_size:
+            break
+        skip += batch_size
+
+    return all_positions
+
+
+#checks if all positions are in the same market. If all positions are trading in the exact same event, polywatcher will flag the account. 
+
+#does not catch closed_positions .....
+def analyse_spread(positions_data):
+    event_ids = [position.get('eventId') for position in positions_data]
+    if event_ids == []:
+        return 0
+    else:
+        total = len(event_ids)
+        unique = len(set(event_ids))
+        similiarity_report = ((total - unique)/total) 
+        return similiarity_report
+
+#Compares account creation date, to the date of its first REDEEM. If less than one month has elapsed between account creation, and a redemption of more than 10,000 USD, the account will be flagged.
+def get_timegap(redemptions_data, creator_data):
+    creator_time = creator_data.get('createdAt')
+    creator_time = datetime.datetime.fromisoformat(creator_time).timestamp()
+
+    risk = 0
+    redemptions_time = []
+    if redemptions_data == []:
+        return 0
+    else:
+        for redemption in redemptions_data:
+            payout = redemption.get("usdcSize", 0)
+            if payout > 10000:
+                redemptions_time.append(redemption.get("timestamp", 0))
+
+    #might require adjusting, too tight a margin
+    for redemption_time in redemptions_time:
+        if  redemption_time - creator_time < 432000:
+            risk = risk + 5
+        elif redemption_time - creator_time < 864000:
+            risk = risk + 4
+        elif redemption_time - creator_time < 1296000:
+            risk = risk + 3
+        elif redemption_time - creator_time < 2160000:
+            risk = risk + 2
+        elif redemption_time - creator_time < 2592000:
+            risk = risk + 1
+
+    return risk
+
+#this function checks if the user has only a few positions despite huge redemptions. if there are less than 10 positions, but more than 300,000 worth of usdc redemptions, the user will be flagged for further investigation.
+#maybe this should use no. of remdemptions rather than no.of positions
+def analyse_volume(positions_data, redemptions_data):
+    num_positions = len(positions_data)
+    risk = " "
+    value_redemptions = 0
+    for redemption in redemptions_data:
+        value_redemptions = value_redemptions + redemption.get("usdcSize", 0)
+    if num_positions < 5 and value_redemptions > 300000:
+        risk = "extreme risk"
+    elif num_positions < 5 and value_redemptions > 200000:
+        risk = "very high risk"
+    elif num_positions < 10 and value_redemptions > 200000:
+        risk = "high risk"
+    elif num_positions < 10 and value_redemptions > 100000:
+        risk = "medium risk"
+    elif num_positions < 10 and value_redemptions > 50000:
+        risk = "low risk"
+    else:
+        risk = "minimal risk"
+    
+
+    return risk
+
+#analyses the total returns of a user. Current positions value + redeemed value.
+#flags if above a certain amount
+def analyse_profits(pnl_data):
+    total = 0
+    for pnl in pnl_data:
+        total += int(pnl.get("realizedPnl", 0)) / 1e6
+    if total > 20000000:
+        return f"extreme risk {total}"
+    elif total > 10000000:
+        return f"high risk {total}"
+    elif total > 500000:
+        return f"medium risk {total}" 
+    elif total > 100000:
+        return f"low risk {total}"
+    else:
+        return f"minimal risk {total}"
+    
+#analyses the success rate of the trader. Current studies by MIT show only 10-16% make money. If activity is both high volume and high profit, the user will be flagged for further investigation
+## Should I check only the success rate of big trades? -hmmmm
+def analyse_success(pnl_data):
+    success = 0
+    failure = 0
+    for pnl in pnl_data:
+        if int(pnl.get("realizedPnl", 0)) > 0:
+            success += 1
+        else:
+            failure += 1
+    if success + failure == 0:
+        return 0
+    success_rate = success / (success + failure)
+    return success_rate
+    
+
+#check if the trader is using a bot or a high frequency trading strategy. If there are more than 10 trades with less than 1s apart, the user will be flagged for further investigation.  
+def high_frequency_check(activity_data):
+    timestamps = []
+    fails = 0
+    verdict = " "
+    for activity in activity_data:
+        if activity.get('type') == "TRADE":
+            activity.get("timestamp")
+            timestamps.append(activity.get("timestamp"))
+    #loop through the timestamps and see if there are more than 10 trades with less than 1s apart.
+    timestamps.sort()
+    for i in range(len(timestamps) - 1):
+        if timestamps[i + 1] - timestamps[i] < 1:
+            fails += 1
+    if fails > 10:
+        verdict = 'Yes'
+    else:
+        verdict = 'No'
+
+    return verdict
+
+#checks if the positions is unusually large compared to other positions made by the user. If X bets 500,000 on a market when he usually bets less than 50,000, flag it as potential insider trade.
+
+def analyse_relative_size(positions_data):
+    sizes = [p.get("size", 0) for p in positions_data]
+    values = [p.get("currentValue", 0) for p in positions_data]
+
+    median_size = statistics.median(sizes)
+    median_value = statistics.median(values)
+    mad_size = statistics.median([abs(s - median_size) for s in sizes])
+    mad_value = statistics.median([abs(v - median_value) for v in values])
+    #this needs to filter only the wins, not all positions - if the user has a large loss, it should not be flagged as insider trading.
+
+    result = 'minimal risk'
+    for position in positions_data:
+        size = position.get("size", 0)
+        value = position.get("currentValue", 0)
+        if size > median_size + 3 * mad_size and value > median_value + 3 * mad_value:
+            return 'high risk'
+        elif size > median_size + 2 * mad_size and value > median_value + 2 * mad_value:
+            result = 'medium risk'
+        elif size > median_size + mad_size and value > median_value + mad_value and result == 'minimal risk':
+            result = 'low risk'
+    return result
+     
+
+
+#large buys placed within 6 hours of the market closing entirely. Suggesting insider knowledge giving them an advantage over non-insiders.
+def analyse_proximity(activity_data):
+    s = {}
+    t = {}
+    for activity in activity_data:
+        if activity.get('type') == "TRADE" and activity.get('side') == "BUY" and activity.get("cost") > 10000:
+            t.add(activity.get("timestamp"))
+            s.add(activity.get("conditionId"))
+
+    #loop th
+
+
+
+        
+
+    
+
+
+
+
+    
+
+            
+            
+    
+   
+
+
+    
+    
+
+
+
+
+    #loop through the data and get the spread for any bet above 10,000
+    #check size of bet versus size of the market
+    
+
+# def analyse_spread(positions_data):
+#     spread = []
+#     for position in positions_data:
+#         event_id = position.get("eventId")
+#         spread.append(event_id)
+#     return spread 
+
+    #loop through positions and find if the user bets on similar markets in his portfolio
+    
+
+
+def analyse_user_1():
+    # checks the size of the bets and the numnber of bets. If there are less than 5 bets and they are all above 10,000, return a warning.
+    pass
+
+
+def analyse_user_2():
+    #checks the date of the account, and the date of the its largest win. If the gap is less than 2 days, return a warning
+    pass
+
+if __name__ == "__main__":
+    print("=== Market Search ===\n")
+    get_creator("0x033025f6cede59b115a49446d0208586ba47eb8f")
+    get_activity("0x033025f6cede59b115a49446d0208586ba47eb8f")

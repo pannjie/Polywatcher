@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Polymarket Lookup</title>
+  </head>
+  <body>
+    <div class="container">
+      <p>Enter a wallet address to view their profile, trades, and potential insider trading risk</p>
+      <form id="lookup-form" class="mt-3">
+          <input type="text"
+          id="address">
+      </form>
+    </div>
+
+  <script>
+    document.getElementById('lookup-form').addEventListener
+    ('submit', function(e) {
+      e.preventDefault();
+      const address = document.getElementById('address').value.trim();
+      if (address) {
+        window.location.href = '/user/' + address;
+      }
+    })
+  </script>  
+  </body> 
+
+</html>
