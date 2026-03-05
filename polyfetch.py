@@ -3,6 +3,9 @@ import requests
 import datetime
 import statistics
 import uvicorn
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.staticfiles import StaticFiles
@@ -91,7 +94,7 @@ def user_raw(address: str):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
     
 def get_chain(address):
-    res = requests.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": "I7WH9KTQXII8QD7BGWPYTZBF3584RJTPGB", "offset": 500, "page": 1})
+    res = requests.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": os.getenv("POLYGONSCAN_API_KEY"), "offset": 500, "page": 1})
     res.raise_for_status()
     data = res.json()
     return data
@@ -370,6 +373,7 @@ def analyse_chain_time(chain_data, address):
                 input_data.append(int(tx.get("value", 0)) / 1e6)
     #add an additional param for 24hr deposits, which is even more sus.
     #polygonscan goes in opposite directions.... what else can we achieve or check.
+    #this needs a point-based system
 
     if sum(input_data) > 50000:
         return "high risk"
