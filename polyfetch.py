@@ -19,6 +19,7 @@ templates = Jinja2Templates(directory="templates")
 GAMMA_API = "https://gamma-api.polymarket.com"
 DATA_API = "https://data-api.polymarket.com"
 GOLDSKY_URL = "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/pnl-subgraph/0.0.14/gn"
+POLYGONSCAN_API = "https://api.etherscan.io/v2/api"
 # Most likely it's the Goldsky subgraph cold start. The first query to the subgraph takes longer as it warms up. If it exceeds your 30-second timeout, it throws a ReadTimeout, which gets caught by your except Exception and returns an error page. Subsequent queries are faster because the subgraph is already warm.
 
 # You could either increase the timeout or add a simple retry:
@@ -37,7 +38,7 @@ def user_profile(request: Request, address: str):
         positions_data = get_positions(address)
         redemptions_data = get_redemptions(address)
         pnl_data = get_pnl(address)
-        # market_data = get_markets(activity_raw)
+        chain_data = get_chain(address)
 
 
         #analyse data
@@ -48,6 +49,8 @@ def user_profile(request: Request, address: str):
         success_rate = analyse_success(pnl_data)
         high_frequency = high_frequency_check(activity_data)
         profit_size = analyse_relative_size(positions_data)
+        chain_analysis = analyse_chain(chain_data, address)
+        chain_analysis_2 = analyse_chain_time(chain_data, address)
 
 
         # print(profit_size)
@@ -63,7 +66,10 @@ def user_profile(request: Request, address: str):
             "creator": creator_data,
             "activity": activity_data,
             "positions": positions_data,
-            "redemptions": redemptions_data
+            "redemptions": redemptions_data,
+            "pnl": pnl_data,
+            "chain_analysis": chain_analysis,
+            "chain_analysis_2": chain_analysis_2
         })
     except Exception as e:
         print(f"ERROR: {type(e).__name__}: {e}")
@@ -77,11 +83,20 @@ def user_raw(address: str):
             "activity": get_activity(address),
             "positions": get_positions(address),
             "redemptions": get_redemptions(address),
-            "pnl": get_pnl(address)
+            "pnl": get_pnl(address),
+            'chain': get_chain(address)
 
         }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
+    
+def get_chain(address):
+    res = requests.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": "I7WH9KTQXII8QD7BGWPYTZBF3584RJTPGB", "offset": 500, "page": 1})
+    res.raise_for_status()
+    data = res.json()
+    return data
+
+   
 
 
 def get_creator(address):
@@ -325,46 +340,45 @@ def analyse_relative_size(positions_data):
             result = 'low risk'
     return result
      
+#checks the first trades in the proxy wallet. if the cumulative value of the first 10 trades is above X USD, flag the account for suspicious activity.
+def analyse_chain(chain_data, address):
+    input_data = []
+    for tx in chain_data.get("result",[])[:20]:
+        if tx.get("to", "").lower() == address.lower():
+            input_data.append(int(tx.get("value", 0)) / 1e6)
 
+    if sum(input_data) > 50000:
+        return "high risk"
+    elif sum(input_data) > 25000:
+        return "medium risk"
+    elif sum(input_data) > 10000:
+        return "low risk"
+    else:        
+        return "minimal risk"
 
-# #large buys placed within 6 hours of the market closing entirely. Suggesting insider knowledge giving them an advantage over non-insiders.
-# def analyse_proximity(activity_data):
-#     s = {}
-#     t = {}
-#     for activity in activity_data:
-#         if activity.get('type') == "TRADE" and activity.get('side') == "BUY" and activity.get("cost") > 10000:
-#             t.add(activity.get("timestamp"))
-#             s.add(activity.get("conditionId"))
+#analyse the amount uploaded to the proxy wallet in its first 24/48 hours. if the amount is above X USD, flag the account for suspicious activity.
 
-    #l
-    
+def analyse_chain_time(chain_data, address):
+    input_data = []
+    first_timestamp = None
+    for tx in chain_data.get("result",[]):
+        if tx.get("to", "").lower() == address.lower():
+            timestamp = int(tx.get("timeStamp", 0))
+            if first_timestamp is None:
+                first_timestamp = timestamp
+            if timestamp - first_timestamp < 172800:  
+                input_data.append(int(tx.get("value", 0)) / 1e6)
+    #add an additional param for 24hr deposits, which is even more sus.
+    #polygonscan goes in opposite directions.... what else can we achieve or check.
 
-
-
-
-    #loop through the data and get the spread for any bet above 10,000
-    #check size of bet versus size of the market
-    
-
-# def analyse_spread(positions_data):
-#     spread = []
-#     for position in positions_data:
-#         event_id = position.get("eventId")
-#         spread.append(event_id)
-#     return spread 
-
-    #loop through positions and find if the user bets on similar markets in his portfolio
-    
-
-
-def analyse_user_1():
-    # checks the size of the bets and the numnber of bets. If there are less than 5 bets and they are all above 10,000, return a warning.
-    pass
-
-
-def analyse_user_2():
-    #checks the date of the account, and the date of the its largest win. If the gap is less than 2 days, return a warning
-    pass
+    if sum(input_data) > 50000:
+        return "high risk"
+    elif sum(input_data) > 25000:
+        return "medium risk"
+    elif sum(input_data) > 10000:
+        return "low risk"
+    else:        
+        return "minimal risk"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
