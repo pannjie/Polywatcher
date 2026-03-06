@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+
   </head>
   <body>
     <div class="container">
@@ -21,14 +23,14 @@
         <h2>Analysis Parameters</h2>
         <h4>Market Spread: {{ spread_analysis }}</h4>
         <h4>Creation/cash_out gap: {{ time_gap }}</h4>
-        <h4>Volume/redemption ratio: {{ volume_analysis }}</h4>
+        <h4>Volume/redemption ratio: {{ volume_analysis }} // ${{ value_redemptions }} across {{ num_positions }} positions</h4>
         <h4>Profit/loss ratio: {{ profit_analysis }}</h4>
-        <h4>Overall Success_rate: {{ success_rate }}</h4>
+        <h4>Overall Success_rate: {{ success_rate }} ({{ success_count }}W / {{ failure_count }}L)</h4>
         <h4>High-frequency trading: {{ high_frequency }}</h4>
-        <h4>Relative Size of position: {{ profit_size }} </h4>
-        <h4>[Blockchain] Initial Deposit Quantity: {{ chain_analysis }} </h4>
-        <h4>[Blockchain]: 24/48hr Deposit Amount: {{ chain_analysis_2 }}  </h4>
-        <h4>[Chain]: </h4>
+        <h4>Relative Size of position: {{ profit_size }} (avg size: {{ average_size }})</h4>
+        <h4>[Blockchain] Initial Deposit Quantity: {{ chain_analysis }} / ${{ chain_total }}</h4>
+        <h4>[Blockchain]: 24/48hr Deposit Amount: {{ chain_analysis_2 }} / {{ chain_analysis_3 }}  </h4>
+        <h4>[Blockchain]: 48hr Volume Input/Output: {{ chain_gap }} / ${{ chain_output }} out</h4>
         <!-- requires cloudscraper/playwright/beautifulsoup -->
       </div>
 

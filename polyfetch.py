@@ -1,8 +1,9 @@
 import os
-import requests
 import datetime
 import statistics
 import uvicorn
+import asyncio
+import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,11 +12,12 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-
-#use polygonscan's free api?
-#use goldsky subgraphQL
-
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_methods=["*"], allow_headers=["*"])
+
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -33,27 +35,30 @@ def home(request: Request):
     return templates.TemplateResponse(request, "search.html", {"title": "Lookup"})
 
 @app.get("/user/{address}")
-def user_profile(request: Request, address: str):
+async def user_profile(request: Request, address: str):
     try:
         #call api
-        creator_data = get_creator(address)
-        activity_data, activity_raw = get_activity(address)
-        positions_data = get_positions(address)
-        redemptions_data = get_redemptions(address)
-        pnl_data = get_pnl(address)
-        chain_data = get_chain(address)
-
+        creator_data, (activity_data, activity_raw), positions_data, redemptions_data, pnl_data, chain_data = await asyncio.gather(
+            get_creator(address),
+            get_activity(address),
+            get_positions(address),
+            get_redemptions(address),
+            get_pnl(address),
+            get_chain(address)
+        )
 
         #analyse data
         spread_analysis = analyse_spread(positions_data)
         time_gap = get_timegap(redemptions_data, creator_data)
-        volume_analysis = analyse_volume(positions_data, redemptions_data)
+        volume_analysis, value_redemptions, num_positions = analyse_volume(positions_data, redemptions_data)
         profit_analysis = analyse_profits(pnl_data)
-        success_rate = analyse_success(pnl_data)
+        success_rate, success_count, failure_count = analyse_success(pnl_data)
         high_frequency = high_frequency_check(activity_data)
-        profit_size = analyse_relative_size(positions_data)
-        chain_analysis = analyse_chain(chain_data, address)
-        chain_analysis_2 = analyse_chain_time(chain_data, address)
+        profit_size, average_size = analyse_relative_size(positions_data)
+        chain_analysis, chain_total = analyse_chain(chain_data, address)
+        chain_analysis_2, input_data_48 = analyse_chain_48hr(chain_data, address)
+        chain_analysis_3, input_data_24 = analyse_chain_24hr(chain_data, address)
+        chain_gap_result, chain_output = chain_gap(chain_data, input_data_48, address)
 
 
         # print(profit_size)
@@ -62,65 +67,111 @@ def user_profile(request: Request, address: str):
             "spread_analysis": spread_analysis,
             "time_gap": time_gap,
             "volume_analysis": volume_analysis,
+            "value_redemptions": value_redemptions,
+            "num_positions": num_positions,
             "profit_analysis": profit_analysis,
             "success_rate": success_rate,
+            "success_count": success_count,
+            "failure_count": failure_count,
             "high_frequency": high_frequency,
             "profit_size": profit_size,
+            "average_size": average_size,
+            "chain_total": chain_total,
             "creator": creator_data,
             "activity": activity_data,
             "positions": positions_data,
             "redemptions": redemptions_data,
             "pnl": pnl_data,
             "chain_analysis": chain_analysis,
-            "chain_analysis_2": chain_analysis_2
+            "chain_analysis_2": chain_analysis_2,
+            "chain_analysis_3": chain_analysis_3,
+            "chain_gap": chain_gap_result,
+            "chain_output": chain_output
         })
     except Exception as e:
         print(f"ERROR: {type(e).__name__}: {e}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
 
 @app.get("/api/user/{address}")
-def user_raw(address: str):
+async def user_raw(address: str):
     try:
-        return {
-            "creator": get_creator(address),
-            "activity": get_activity(address),
-            "positions": get_positions(address),
-            "redemptions": get_redemptions(address),
-            "pnl": get_pnl(address),
-            'chain': get_chain(address)
+        creator, (activity, _), positions, redemptions, pnl, chain = await asyncio.gather(
+            get_creator(address),
+            get_activity(address),
+            get_positions(address),
+            get_redemptions(address),
+            get_pnl(address),
+            get_chain(address)
+        )
 
+        spread_analysis = analyse_spread(positions)
+        time_gap = get_timegap(redemptions, creator)
+        volume_analysis, value_redemptions, num_positions = analyse_volume(positions, redemptions)
+        profit_analysis = analyse_profits(pnl)
+        success_rate, success_count, failure_count = analyse_success(pnl)
+        high_frequency = high_frequency_check(activity)
+        profit_size, average_size = analyse_relative_size(positions)
+        chain_analysis, chain_total = analyse_chain(chain, address)
+        chain_analysis_2, input_data_48 = analyse_chain_48hr(chain, address)
+        chain_analysis_3, _ = analyse_chain_24hr(chain, address)
+        chain_gap_result, chain_output = chain_gap(chain, input_data_48, address)
+
+        return {
+            "creator": creator,
+            "activity": activity,
+            "positions": positions,
+            "redemptions": redemptions,
+            "pnl": pnl,
+            "spread_analysis": spread_analysis,
+            "time_gap": time_gap,
+            "volume_analysis": volume_analysis,
+            "value_redemptions": value_redemptions,
+            "num_positions": num_positions,
+            "profit_analysis": profit_analysis,
+            "success_rate": success_rate,
+            "success_count": success_count,
+            "failure_count": failure_count,
+            "high_frequency": high_frequency,
+            "profit_size": profit_size,
+            "average_size": average_size,
+            "chain_analysis": chain_analysis,
+            "chain_total": chain_total,
+            "chain_analysis_2": chain_analysis_2,
+            "chain_analysis_3": chain_analysis_3,
+            "chain_gap": chain_gap_result,
+            "chain_output": chain_output
         }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
     
-def get_chain(address):
-    res = requests.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": os.getenv("POLYGONSCAN_API_KEY"), "offset": 500, "page": 1})
-    res.raise_for_status()
-    data = res.json()
-    return data
+async def get_chain(address):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": os.getenv("POLYGONSCAN_API_KEY"), "offset": 500, "page": 1})
+        res.raise_for_status()
+        data = res.json()
+        return data
 
-   
 
+async def get_creator(address):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{GAMMA_API}/public-profile", params={"address": address})
+        res.raise_for_status()
+        data = res.json()
 
-def get_creator(address):
-    res = requests.get(f"{GAMMA_API}/public-profile", params={"address": address})
-    res.raise_for_status()
-    data = res.json()
-
-    return data
+        return data
        
-def get_redemptions(user):
-    res = requests.get(f"{DATA_API}/activity", params={"user": user, "type": "REDEEM", "limit": 1000})
-    res.raise_for_status()
-    data = res.json()
+async def get_redemptions(user):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/activity", params={"user": user, "type": "REDEEM", "limit": 1000})
+        res.raise_for_status()
+        return res.json()
 
-    return data
 
-
-def get_activity(user, limit=1000):
-    res = requests.get(f"{DATA_API}/activity", params={"user": user, "limit": limit})
-    res.raise_for_status()
-    data = res.json()
+async def get_activity(user, limit=1000):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/activity", params={"user": user, "limit": limit})
+        res.raise_for_status()
+        data = res.json()
 
     trades = []
     for item in data:
@@ -153,53 +204,53 @@ def get_activity(user, limit=1000):
 
 
 
-def get_positions(user, limit=1000):
-    res = requests.get(f"{DATA_API}/positions", params={"user": user, "limit": limit})
-    res.raise_for_status()
-    data = res.json()
-    return data
+async def get_positions(user, limit=1000):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/positions", params={"user": user, "limit": limit})
+        res.raise_for_status()
+        return res.json()
 
-def get_pnl(address):
+async def get_pnl(address):
     all_positions = []
     skip = 0
     batch_size = 100
 
-    while True:
-        query = """
-        {
-          userPositions(
-            where: { user: "%s" }
-            first: %d
-            skip: %d
-          ) {
-            tokenId
-            amount
-            avgPrice
-            realizedPnl
-            totalBought
-          }
-        }
-        """ % (address.lower(), batch_size, skip)
+    async with httpx.AsyncClient() as client:
+        while True:
+            query = """
+            {
+              userPositions(
+                where: { user: "%s" }
+                first: %d
+                skip: %d
+              ) {
+                tokenId
+                amount
+                avgPrice
+                realizedPnl
+                totalBought
+              }
+            }
+            """ % (address.lower(), batch_size, skip)
 
-        res = requests.post(GOLDSKY_URL, json={"query": query}, timeout=30)
-        res.raise_for_status()
-        result = res.json()
-        if "data" not in result or result["data"] is None:
-            print(f"GOLDSKY ERROR: {result}")
-            break
+            res = await client.post(GOLDSKY_URL, json={"query": query}, timeout=30)
+            res.raise_for_status()
+            result = res.json()
+            if "data" not in result or result["data"] is None:
+                print(f"GOLDSKY ERROR: {result}")
+                break
 
-        positions = result["data"]["userPositions"]
-        all_positions.extend(positions)
+            positions = result["data"]["userPositions"]
+            all_positions.extend(positions)
 
-        if len(positions) < batch_size:
-            break
-        skip += batch_size
+            if len(positions) < batch_size:
+                break
+            skip += batch_size
 
     return all_positions
 
 
 #checks if all positions are in the same market. If all positions are trading in the exact same event, polywatcher will flag the account. 
-
 #does not catch closed_positions .....
 def analyse_spread(positions_data):
     event_ids = [position.get('eventId') for position in positions_data]
@@ -208,8 +259,8 @@ def analyse_spread(positions_data):
     else:
         total = len(event_ids)
         unique = len(set(event_ids))
-        similiarity_report = ((total - unique)/total) 
-        return similiarity_report
+        similiarity_report = ((total - unique)/total) * 100
+        return f"{similiarity_report}%"
 
 #Compares account creation date, to the date of its first REDEEM. If less than one month has elapsed between account creation, and a redemption of more than 10,000 USD, the account will be flagged.
 def get_timegap(redemptions_data, creator_data):
@@ -229,15 +280,16 @@ def get_timegap(redemptions_data, creator_data):
     #might require adjusting, too tight a margin
     for redemption_time in redemptions_time:
         if  redemption_time - creator_time < 432000:
-            risk = risk + 5
+            risk = "< 5 days"
         elif redemption_time - creator_time < 864000:
-            risk = risk + 4
+            risk = "< 10 days"
         elif redemption_time - creator_time < 1296000:
-            risk = risk + 3
+            risk = "< 15 days"
         elif redemption_time - creator_time < 2160000:
-            risk = risk + 2
+            risk = "< 25 days"
         elif redemption_time - creator_time < 2592000:
-            risk = risk + 1
+            risk = "< 30 days"
+        else:            risk = "> 30 days"
 
     return risk
 
@@ -250,20 +302,20 @@ def analyse_volume(positions_data, redemptions_data):
     for redemption in redemptions_data:
         value_redemptions = value_redemptions + redemption.get("usdcSize", 0)
     if num_positions < 5 and value_redemptions > 300000:
-        risk = "extreme risk"
+        risk = f"extreme risk"
     elif num_positions < 5 and value_redemptions > 200000:
-        risk = "very high risk"
+        risk = f"very high risk"
     elif num_positions < 10 and value_redemptions > 200000:
-        risk = "high risk"
+        risk = f"high risk"
     elif num_positions < 10 and value_redemptions > 100000:
-        risk = "medium risk"
+        risk = f"medium risk"
     elif num_positions < 10 and value_redemptions > 50000:
-        risk = "low risk"
+        risk = f"low risk"
     else:
-        risk = "minimal risk"
+        risk = f"minimal risk"
     
 
-    return risk
+    return risk, value_redemptions, num_positions
 
 #analyses the total returns of a user. Current positions value + redeemed value.
 #flags if above a certain amount
@@ -293,9 +345,9 @@ def analyse_success(pnl_data):
         else:
             failure += 1
     if success + failure == 0:
-        return 0
+        return 0, 0, 0
     success_rate = success / (success + failure)
-    return success_rate
+    return success_rate, success, failure
     
 
 #check if the trader is using a bot or a high frequency trading strategy. If there are more than 10 trades with less than 1s apart, the user will be flagged for further investigation.  
@@ -325,44 +377,50 @@ def analyse_relative_size(positions_data):
     sizes = [p.get("size", 0) for p in positions_data]
     values = [p.get("currentValue", 0) for p in positions_data]
 
+
     median_size = statistics.median(sizes)
     median_value = statistics.median(values)
     mad_size = statistics.median([abs(s - median_size) for s in sizes])
     mad_value = statistics.median([abs(v - median_value) for v in values])
     #this needs to filter only the wins, not all positions - if the user has a large loss, it should not be flagged as insider trading.
 
-    result = 'minimal risk'
+    result = ' '
+    average_size = statistics.mean(sizes)
+
     for position in positions_data:
         size = position.get("size", 0)
         value = position.get("currentValue", 0)
         if size > median_size + 3 * mad_size and value > median_value + 3 * mad_value:
-            return 'high risk'
+            return 'high risk', average_size
         elif size > median_size + 2 * mad_size and value > median_value + 2 * mad_value:
             result = 'medium risk'
         elif size > median_size + mad_size and value > median_value + mad_value and result == 'minimal risk':
             result = 'low risk'
-    return result
+    return result, average_size
      
-#checks the first trades in the proxy wallet. if the cumulative value of the first 10 trades is above X USD, flag the account for suspicious activity.
+#checks the first trades into the proxy wallet. if the cumulative value of the first 20 trades is above X USD, flag the account for suspicious activity.
 def analyse_chain(chain_data, address):
     input_data = []
     for tx in chain_data.get("result",[])[:20]:
         if tx.get("to", "").lower() == address.lower():
             input_data.append(int(tx.get("value", 0)) / 1e6)
 
+    result = ' '
     if sum(input_data) > 50000:
-        return "high risk"
+        result = "high risk"
     elif sum(input_data) > 25000:
-        return "medium risk"
+        result = "medium risk"
     elif sum(input_data) > 10000:
-        return "low risk"
+        result = "low risk"
     else:        
-        return "minimal risk"
+        result = "minimal risk"
+
+    return result, sum(input_data)
 
 #analyse the amount uploaded to the proxy wallet in its first 24/48 hours. if the amount is above X USD, flag the account for suspicious activity.
 
-def analyse_chain_time(chain_data, address):
-    input_data = []
+def analyse_chain_48hr(chain_data, address):
+    input_data_48 = []
     first_timestamp = None
     for tx in chain_data.get("result",[]):
         if tx.get("to", "").lower() == address.lower():
@@ -370,19 +428,68 @@ def analyse_chain_time(chain_data, address):
             if first_timestamp is None:
                 first_timestamp = timestamp
             if timestamp - first_timestamp < 172800:  
-                input_data.append(int(tx.get("value", 0)) / 1e6)
-    #add an additional param for 24hr deposits, which is even more sus.
-    #polygonscan goes in opposite directions.... what else can we achieve or check.
-    #this needs a point-based system
+                input_data_48.append(int(tx.get("value", 0)) / 1e6)
 
-    if sum(input_data) > 50000:
-        return "high risk"
-    elif sum(input_data) > 25000:
-        return "medium risk"
-    elif sum(input_data) > 10000:
-        return "low risk"
+    if sum(input_data_48) > 50000:
+        return "high risk", input_data_48
+    elif sum(input_data_48) > 25000:
+        return "medium risk", input_data_48
+    elif sum(input_data_48) > 10000:
+        return "low risk", input_data_48
     else:        
-        return "minimal risk"
+        return "minimal risk", input_data_48
+    
+def analyse_chain_24hr(chain_data, address):
+    input_data_24 = []
+    first_timestamp = None
+    for tx in chain_data.get("result",[]):
+        if tx.get("to", "").lower() == address.lower():
+            timestamp = int(tx.get("timeStamp", 0))
+            if first_timestamp is None:
+                first_timestamp = timestamp
+            if timestamp - first_timestamp < 86400:  
+                input_data_24.append(int(tx.get("value", 0)) / 1e6)
+
+    if sum(input_data_24) > 50000:
+        return "high risk", input_data_24
+    elif sum(input_data_24) > 25000:
+        return "medium risk", input_data_24
+    elif sum(input_data_24) > 10000:
+        return "low risk", input_data_24
+    else:        
+        return "minimal risk", input_data_24
+
+def chain_gap(chain_data, input_data_48, address):
+    # Anchor the 48hr window to the first deposit (input), not first withdrawal
+    # AI
+    first_input_timestamp = None
+    for tx in chain_data.get("result", []):
+        if tx.get("to", "").lower() == address.lower():
+            first_input_timestamp = int(tx.get("timeStamp", 0))
+            break
+
+    output_48hr = []
+    if first_input_timestamp:
+        for tx in chain_data.get("result", []):
+            if tx.get("from", "").lower() == address.lower():
+                timestamp = int(tx.get("timeStamp", 0))
+                value = int(tx.get("value", 0)) / 1e6
+                if timestamp - first_input_timestamp < 172800 and value > 2000:
+                    output_48hr.append(value)
+
+   #value > 5000 indicates that it is a withdrawal to a hot wallet or a GSN, rather than a new txn or trade. This is to avoid flagging users who make a large deposit, but then make a few small trades, which is not necessarily suspicious.
+    results = ""
+    if sum(input_data_48) > 50000  and (sum(output_48hr) > 50000 or len(output_48hr) > 10):
+        results = "high risk"
+    elif sum(input_data_48) > 25000 and (sum(output_48hr) > 25000 or len(output_48hr) > 5):
+        results = 'medium risk'
+    elif sum(input_data_48) > 10000 and (sum(output_48hr) > 10000 or len(output_48hr) > 2):
+        results = 'low risk'
+    else:        
+        results = 'minimal risk'
+
+    return results, sum(output_48hr)
+            
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
