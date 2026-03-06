@@ -1,25 +1,9 @@
 <script>
-  import { page } from '$app/stores';
-
-  const address = $page.params.address;
-  let data = null;
-  let error = null;
-
-  async function load() {
-    const res = await fetch(`http://localhost:8000/api/user/${address}`);
-    if (!res.ok) { error = 'Could not load profile.'; return; }
-    data = await res.json();
-  }
-
-  load();
+  let { data } = $props();
 </script>
 
-{#if error}
-  <p>{error}</p>
-{:else if !data}
-  <p>Loading...</p>
-{:else}
-  <h1>{data.creator?.name ?? address}</h1>
+{#if data}
+  <h1>{data.creator?.name ?? data.creator?.proxyWallet ?? 'Unknown'}</h1>
   <p><strong>Username:</strong> {data.creator?.pseudonym ?? ''}</p>
   <p><strong>Bio:</strong> {data.creator?.bio ?? ''}</p>
   <p><strong>Wallet:</strong> {data.creator?.proxyWallet ?? ''}</p>
