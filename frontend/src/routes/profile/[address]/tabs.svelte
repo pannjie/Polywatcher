@@ -21,7 +21,7 @@
       <tbody>
         {#each data.activity as action}
           <tr>
-            <td>{action.title}</td><td>{action.market.slice(0,5)}...{action.market.slice(-4)}</td><td>{action.timestamp}</td><td>{action.side}</td>
+            <td>{action.title}</td><td>{action.market ? `${action.market.slice(0,5)}...${action.market.slice(-4)}` : ''}</td><td>{action.timestamp}</td><td>{action.side}</td>
             <td>{action.outcome}</td><td>{action.size}</td><td>{action.cost}</td><td>{action.price}</td><td>{action.type}</td>
           </tr>
         {:else}
