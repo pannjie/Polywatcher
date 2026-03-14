@@ -22,6 +22,10 @@ POLYGONSCAN_API = "https://api.etherscan.io/v2/api"
 
 
 
+@app.get("/")
+async def health():
+    return {"status": "ok"}
+
 @app.get("/api/user/{address}")
 async def user_raw(address: str):
     try:
