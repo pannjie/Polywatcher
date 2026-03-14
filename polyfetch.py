@@ -233,7 +233,7 @@ def get_timegap(redemptions_data, creator_data):
 
 def get_timegap_risk(time_gap):
     if time_gap is None:
-        return ""
+        return "unknown"
     if time_gap <= 5:
         return "extreme risk"
     elif time_gap <= 10:
@@ -245,7 +245,7 @@ def get_timegap_risk(time_gap):
     elif time_gap <= 30:
         return "low risk"
     else:
-        return ''
+        return "minimal risk"
 
 
 
