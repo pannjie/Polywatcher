@@ -138,7 +138,8 @@ async def user_raw(address: str):
             "chain_analysis_2": chain_analysis_2,
             "chain_analysis_3": chain_analysis_3,
             "chain_gap": chain_gap_result,
-            "chain_output": chain_output
+            "chain_output": chain_output,
+            "chain_raw": chain.get("result", [])
         }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
