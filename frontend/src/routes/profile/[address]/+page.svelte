@@ -12,8 +12,8 @@
     if (value == 'medium risk') return colours[2];
     if (value == 'high risk') return colours[3];
     if (value == 'very high risk') return colours[4];
-    if (value = 'extreme risk') return colours[5];
-    else return '000000';
+    if (value == 'extreme risk') return colours[5];
+    else return '#000000';
   }
 
   let address = '';
