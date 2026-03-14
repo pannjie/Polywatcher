@@ -330,9 +330,11 @@ def high_frequency_check(activity_data):
 #checks if the positions is unusually large compared to other positions made by the user. If X bets 500,000 on a market when he usually bets less than 50,000, flag it as potential insider trade.
 
 def analyse_relative_size(positions_data):
+    if not positions_data:
+        return 'minimal risk', 0
+
     sizes = [p.get("size", 0) for p in positions_data]
     values = [p.get("currentValue", 0) for p in positions_data]
-
 
     median_size = statistics.median(sizes)
     median_value = statistics.median(values)
