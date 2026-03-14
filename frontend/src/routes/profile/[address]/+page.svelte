@@ -7,12 +7,12 @@
   ]
 
   function getColour(value) {
-    if (parseFloat(value) <= 10) return colours[0];
-    if (parseFloat(value) <= 25) return colours[1];
-    if (parseFloat(value) <= 50) return colours[2];
-    if (parseFloat(value) <= 75) return colours[3];
-    if (parseFloat(value) <= 90) return colours[4];
-    if (parseFloat(value) <= 100) return colours[5];
+    if (value == 'minimal risk') return colours[0];
+    if (value == 'low risk') return colours[1];
+    if (value == 'medium risk') return colours[2];
+    if (value == 'high risk') return colours[3];
+    if (value == 'very high risk') return colours[4];
+    if (value = 'extreme risk') return colours[5];
     else return '000000';
   }
 
@@ -81,10 +81,10 @@
               </thead>
               <tbody>
                 
-                <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_analysis)}">{data.spread_analysis}</td></tr>
+                <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}</td></tr>
             
 
-                <tr><td>Creation/cashout gap</td><td>{data.time_gap}</td></tr>
+                <tr><td>Creation/cashout gap</td><td style='background-color:{getColour(data.time_gap_risk)}'>{data.time_gap}</td></tr>
                 <tr><td>Volume/redemption</td><td>{data.volume_analysis} — ${data.value_redemptions} across {data.num_positions} positions</td></tr>
                 <tr><td>Profit/loss ratio</td><td>{data.profit_analysis}</td></tr>
                 <tr><td>Success rate</td><td>{data.success_rate} ({data.success_count}W / {data.failure_count}L)</td></tr>
