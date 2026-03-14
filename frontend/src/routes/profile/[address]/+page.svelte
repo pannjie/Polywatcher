@@ -2,8 +2,12 @@
   import Tabs from './tabs.svelte';
   let { data } = $props();
   const colours = [
-    "#3B6D11", "#97C459", "#EF9F27",
-    "#EF9F27", "#E24B4A", "#A32D2D"
+    "rgba(59, 109, 17, 0.7)",
+    "rgba(151, 196, 89, 0.7)",
+    "rgba(239, 159, 39, 0.7)",
+    "rgba(239, 159, 39, 0.7)",
+    "rgba(226, 75, 74, 0.7)",
+    "rgba(163, 45, 45, 0.7)"
   ]
 
   function getColour(value) {
@@ -84,7 +88,7 @@
                 <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}</td></tr>
             
 
-                <tr><td>Creation/cashout gap</td><td style='background-color:{getColour(data.time_gap_risk)}'>{data.time_gap}</td></tr>
+                <tr><td>Creation/cashout gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td></tr>
                 <tr><td>Volume/redemption</td><td>{data.volume_analysis} — ${data.value_redemptions} across {data.num_positions} positions</td></tr>
                 <tr><td>Profit/loss ratio</td><td>{data.profit_analysis}</td></tr>
                 <tr><td>Success rate</td><td>{data.success_rate} ({data.success_count}W / {data.failure_count}L)</td></tr>
