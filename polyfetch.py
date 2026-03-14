@@ -223,6 +223,7 @@ def get_timegap(redemptions_data, creator_data):
     #might require adjusting, too tight a margin
     gap = first_redemption.get("timestamp", 0) - creator_time
     time_gap = gap / (60 * 60 * 24) 
+    time_gap = round(time_gap, 2)
 
     return time_gap
 
