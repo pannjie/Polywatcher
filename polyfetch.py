@@ -84,7 +84,8 @@ async def user_profile(request: Request, address: str):
             "chain_analysis_2": chain_analysis_2,
             "chain_analysis_3": chain_analysis_3,
             "chain_gap": chain_gap_result,
-            "chain_output": chain_output
+            "chain_output": chain_output,
+            "chain_raw": chain_data.get("result", [])
         })
     except Exception as e:
         print(f"ERROR: {type(e).__name__}: {e}")

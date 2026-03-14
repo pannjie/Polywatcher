@@ -8,53 +8,14 @@
   }
 </script>
 
-<div class="container">
-  <h1>Polywatcher</h1>
-  <div class="search-bar">
-    <input bind:value={address} placeholder="Enter wallet address" onkeydown={e => e.key === 'Enter' && search()} />
-  </div>
-  <div class="button">
-    <button onclick={search}>Search</button>
-  </div>
+<div class="min-h-screen flex items-center justify-center">
+<fieldset class="fieldset">
+  <legend class="fieldset-legend font-black text-5xl">Polywatcher v.2.1</legend>
+  <input type="text" class="input h-12 w-100 border-2 border-black " placeholder="Type here" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
+  <p class="label">Developed by PJ/Goldsmiths</p>
+</fieldset>
 </div>
 
 <style>
-  .container {
-    text-align: center;
-    color: black;
-    font-family: "Source Code Pro";
-    margin-top: 10em;
-  }
-
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 0.75em;
-  }
-
-  .search-bar input {
-    width: 40em;
-    height: 2.5em;
-    border-radius: 5px;
-    text-align: center;
-    font-family: "Source Code Pro";
-    font-size: 1rem;
-  }
-
-  .button {
-    margin-top: 1.25em;
-  }
-
-  button {
-    font-family: "Source Code Pro";
-    font-weight: bold;
-    font-size: 1rem;
-    width: 8em;
-    height: 2.5em;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  :global(body) {
-    background: white;
-  }
+  
 </style>
