@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { API_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+const API_URL = env.API_URL;
 
 export async function load({ params, fetch }) {
   const res = await fetch(`${API_URL}/api/user/${params.address}`);
