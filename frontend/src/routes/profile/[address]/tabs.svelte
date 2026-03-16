@@ -19,7 +19,7 @@
     <table class="table">
       <thead><tr><th>Title</th><th>Market</th><th>Timestamp</th><th>Side</th><th>Outcome</th><th>Size</th><th>Cost</th><th>Price</th><th>Type</th></tr></thead>
       <tbody>
-        {#each data.activity as action}
+        {#each data.activity ?? [] as action}
           <tr>
             <td>{action.title}</td><td>{action.market ? `${action.market.slice(0,5)}...${action.market.slice(-4)}` : ''}</td><td>{action.timestamp}</td><td>{action.side}</td>
             <td>{action.outcome}</td><td>{action.size}</td><td>{action.cost}</td><td>{action.price}</td><td>{action.type}</td>
@@ -35,7 +35,7 @@
     <table class="table">
       <thead><tr><th>Title</th><th>Outcome</th><th>Size</th><th>Initial Value</th><th>Current Value</th><th> Cash Pnl</th><th>Percent% PnL</th></tr></thead>
       <tbody>
-        {#each data.positions as positions}
+        {#each data.positions ?? [] as positions}
           <tr>
             <td>{positions.title}</td><td>{positions.outcome}</td><td>{positions.size}</td>
             <td>{positions.initialValue}</td><td>{positions.currentValue}</td><td>{positions.cashPnl}</td><td>{positions.percentPnl}</td>
@@ -51,7 +51,7 @@
      <table class="table">
       <thead><tr><th>Title</th><th>Timestamp</th><th>Size</th><th>Condition Id</th></tr></thead>
       <tbody>
-        {#each data.redemptions as redemption}
+        {#each data.redemptions ?? [] as redemption}
           <tr>
             <td>{redemption.title}</td><td>{redemption.timestamp}</td><td>{redemption.size}</td>
             <td>{redemption.conditionId}</td>
@@ -67,7 +67,7 @@
     <table class="table">
       <thead><tr><th>Token Id</th><th>Amount</th><th>Avg Price</th><th>Realized Pnl</th><th>Total Bought</th></tr></thead>
       <tbody>
-        {#each data.pnl as pnl}
+        {#each data.pnl ?? [] as pnl}
           <tr>
             <td>{pnl.tokenId}</td><td>{pnl.amount}</td><td>{pnl.avgPrice}</td>
             <td>{pnl.realizedPnl}</td><td>{pnl.totalBought}</td>
@@ -83,7 +83,7 @@
     <table class="table">
       <thead><tr><th>Timestamp</th><th>From</th><th>To</th><th>Value</th><th>Token</th><th>Hash</th></tr></thead>
       <tbody>
-        {#each data.chain_raw as tx}
+        {#each Array.isArray(data.chain_raw) ? data.chain_raw : [] as tx}
           <tr>
             <td>{tx.timeStamp}</td><td>{tx.from}</td><td>{tx.to}</td>
             <td>{tx.value}</td><td>{tx.tokenSymbol}</td><td>{tx.hash}</td>

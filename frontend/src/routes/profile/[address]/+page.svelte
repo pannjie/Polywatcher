@@ -87,11 +87,15 @@
                 
                 <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}</td></tr>
             
+                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td></tr>
 
-                <tr><td>Creation/cashout gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td></tr>
-                <tr><td>Volume/redemption</td><td>{data.volume_analysis} — ${data.value_redemptions} across {data.num_positions} positions</td></tr>
-                <tr><td>Profit/loss ratio</td><td>{data.profit_analysis}</td></tr>
-                <tr><td>Success rate</td><td>{data.success_rate} ({data.success_count}W / {data.failure_count}L)</td></tr>
+                <tr><td>Volume/Redemptio Radio</td><td style="background-color:{getColour(data.volume_risk)}"> ${data.value_redemptions} across {data.num_positions} positions</td></tr>
+
+                <tr><td>Profit/loss</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk} / ${data.total_profit}</td></tr>
+
+                <tr><td>Success rate</td><td style="background-color:{getColour(data.success_risk)}">{data.success_rate} / ({data.success_count}W / {data.failure_count}L)</td></tr>
+
+
                 <tr><td>High-frequency trading</td><td>{data.high_frequency}</td></tr>
                 <tr><td>Position size</td><td>{data.profit_size} (avg: {data.average_size})</td></tr>
                 <tr><td>Initial deposit</td><td>{data.chain_analysis} / ${data.chain_total}</td></tr>

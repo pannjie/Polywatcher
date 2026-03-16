@@ -45,11 +45,14 @@ async def user_raw(address: str):
         time_gap = get_timegap(redemptions, creator)
         time_gap_risk = get_timegap_risk(time_gap)
 
-        volume_analysis, value_redemptions, num_positions = analyse_volume(positions, redemptions)
+        value_redemptions, num_positions = analyse_volume(positions, closed_positions, redemptions)
+        volume_risk = analyse_volume_risk(value_redemptions, closed_positions, positions)
 
-        profit_analysis = analyse_profits(pnl)
+        total_profit = analyse_profits(pnl)
+        profit_risk = analyse_profit_risk(total_profit)
 
         success_rate, success_count, failure_count = analyse_success(pnl)
+        success_risk = analyse_success_risk(success_rate)
 
         high_frequency = high_frequency_check(activity)
 
@@ -64,25 +67,36 @@ async def user_raw(address: str):
         chain_gap_result, chain_output = chain_gap(chain, input_data_48, address)
 
         return {
+            #raw
             "creator": creator,
-            #Raw data 
             "activity": activity,
             "positions": positions,
             "closed_positions": closed_positions,
             "redemptions": redemptions,
             "pnl": pnl,
+            #1 SPREAD ANALYSIS
             "spread_analysis": spread_analysis,
             "spread_risk": spread_risk,
+            #2 TIME GAP ANALYSIS
             "time_gap": time_gap,
             "time_gap_risk": time_gap_risk,
-            "volume_analysis": volume_analysis,
+            #3 VOLUME ANALYSIS
+            "volume_risk": volume_risk,
             "value_redemptions": value_redemptions,
             "num_positions": num_positions,
-            "profit_analysis": profit_analysis,
+            #4 PROFIT ANALYSIS
+            "total_profit": total_profit,
+            "profit_risk": profit_risk,
+            #5 SUCCESS RATE ANALYSIS
             "success_rate": success_rate,
             "success_count": success_count,
             "failure_count": failure_count,
+            "success_risk": success_risk,
+
+            #6 HIGH FREQUENCY ANALYSIS
             "high_frequency": high_frequency,
+
+
             "profit_size": profit_size,
             "average_size": average_size,
 
@@ -251,44 +265,77 @@ def get_timegap_risk(time_gap):
 
 #this function checks if the user has only a few positions despite huge redemptions. if there are less than 10 positions, but more than 300,000 worth of usdc redemptions, the user will be flagged for further investigation.
 #maybe this should use no. of remdemptions rather than no.of positions
-def analyse_volume(positions_data, redemptions_data):
-    num_positions = len(positions_data)
+# def analyse_volume(positions_data, redemptions_data):
+#     num_positions = len(positions_data)
+#     risk = " "
+#     value_redemptions = 0
+#     for redemption in redemptions_data:
+#         value_redemptions = value_redemptions + redemption.get("usdcSize", 0)
+#     if num_positions < 5 and value_redemptions > 300000:
+#         risk = f"extreme risk"
+#     elif num_positions < 5 and value_redemptions > 200000:
+#         risk = f"very high risk"
+#     elif num_positions < 10 and value_redemptions > 200000:
+#         risk = f"high risk"
+#     elif num_positions < 10 and value_redemptions > 100000:
+#         risk = f"medium risk"
+#     elif num_positions < 10 and value_redemptions > 50000:
+#         risk = f"low risk"
+#     else:
+#         risk = f"minimal risk"
+    
+
+    # return risk, value_redemptions, num_positions
+
+def analyse_volume(positions_data, closed_positions, redemptions_data):
+    all_positions = positions_data + closed_positions
+    num_positions = len(all_positions)
+    value_redemptions = sum(redemption.get("usdcSize", 0) for redemption in redemptions_data)
+    return value_redemptions, num_positions
+
+def analyse_volume_risk(value_redemptions, closed_positions, positions_data):
+    all_positions = positions_data + closed_positions
+    num_positions = len(all_positions)
     risk = " "
-    value_redemptions = 0
-    for redemption in redemptions_data:
-        value_redemptions = value_redemptions + redemption.get("usdcSize", 0)
-    if num_positions < 5 and value_redemptions > 300000:
+    if (num_positions < 5 and value_redemptions > 250000) or (num_positions < 10 and value_redemptions > 500000):
         risk = f"extreme risk"
-    elif num_positions < 5 and value_redemptions > 200000:
+    elif (num_positions < 5 and value_redemptions > 200000) or (num_positions < 10 and value_redemptions > 400000):
         risk = f"very high risk"
-    elif num_positions < 10 and value_redemptions > 200000:
+    elif (num_positions < 5 and value_redemptions > 150000) or (num_positions < 10 and value_redemptions > 300000):
         risk = f"high risk"
-    elif num_positions < 10 and value_redemptions > 100000:
+    elif (num_positions < 5 and value_redemptions > 100000) or (num_positions < 10 and value_redemptions > 200000):
         risk = f"medium risk"
-    elif num_positions < 10 and value_redemptions > 50000:
+    elif (num_positions < 5 and value_redemptions > 50000) or  (num_positions < 10 and value_redemptions > 100000):
         risk = f"low risk"
     else:
         risk = f"minimal risk"
-    
+    return risk
 
-    return risk, value_redemptions, num_positions
 
-#analyses the total returns of a user. Current positions value + redeemed value.
-#flags if above a certain amount
+
 def analyse_profits(pnl_data):
-    total = 0
+    total_profit = 0
     for pnl in pnl_data:
-        total += int(pnl.get("realizedPnl", 0)) / 1e6
-    if total > 20000000:
-        return f"extreme risk {total}"
-    elif total > 10000000:
-        return f"high risk {total}"
-    elif total > 500000:
-        return f"medium risk {total}" 
-    elif total > 100000:
-        return f"low risk {total}"
+        total_profit += int(pnl.get("realizedPnl" or 0)) / 1e6
+    return total_profit
+  
+    
+def analyse_profit_risk(total_profit):
+    profit_risk = " "
+    if total_profit > 500000:
+        profit_risk = "extreme risk"
+    elif total_profit > 250000:
+        profit_risk = "very high risk"
+    elif total_profit > 100000:
+        profit_risk = "high risk"
+    elif total_profit > 50000:
+        profit_risk = "medium risk"
+    elif total_profit > 10000:
+        profit_risk = "low risk"
     else:
-        return f"minimal risk {total}"
+        profit_risk = "minimal risk"
+    return profit_risk
+
     
 #analyses the success rate of the trader. Current studies by MIT show only 10-16% make money. If activity is both high volume and high profit, the user will be flagged for further investigation
 ## Should I check only the success rate of big trades? -hmmmm
@@ -296,14 +343,29 @@ def analyse_success(pnl_data):
     success = 0
     failure = 0
     for pnl in pnl_data:
-        if int(pnl.get("realizedPnl", 0)) > 0:
+        if int(pnl.get("realizedPnl" or 0)) > 0:
             success += 1
-        else:
+        elif int(pnl.get("realizedPnl" or 0)) < 0:
             failure += 1
     if success + failure == 0:
         return 0, 0, 0
-    success_rate = success / (success + failure)
+    success_rate = success / (success + failure)* 100
     return success_rate, success, failure
+
+
+def analyse_success_risk(success_rate):
+    if success_rate > 60:
+        return "extreme risk"
+    elif success_rate > 50:
+        return "very high risk"
+    elif success_rate > 40:
+        return "high risk"
+    elif success_rate > 30:
+        return "medium risk"
+    elif success_rate > 20:
+        return "low risk"
+    else:
+        return "minimal risk"
     
 
 #check if the trader is using a bot or a high frequency trading strategy. If there are more than 10 trades with less than 1s apart, the user will be flagged for further investigation.  
