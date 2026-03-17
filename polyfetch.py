@@ -278,30 +278,6 @@ def get_timegap_risk(time_gap):
 
 
 
-#this function checks if the user has only a few positions despite huge redemptions. if there are less than 10 positions, but more than 300,000 worth of usdc redemptions, the user will be flagged for further investigation.
-#maybe this should use no. of remdemptions rather than no.of positions
-# def analyse_volume(positions_data, redemptions_data):
-#     num_positions = len(positions_data)
-#     risk = " "
-#     value_redemptions = 0
-#     for redemption in redemptions_data:
-#         value_redemptions = value_redemptions + redemption.get("usdcSize", 0)
-#     if num_positions < 5 and value_redemptions > 300000:
-#         risk = f"extreme risk"
-#     elif num_positions < 5 and value_redemptions > 200000:
-#         risk = f"very high risk"
-#     elif num_positions < 10 and value_redemptions > 200000:
-#         risk = f"high risk"
-#     elif num_positions < 10 and value_redemptions > 100000:
-#         risk = f"medium risk"
-#     elif num_positions < 10 and value_redemptions > 50000:
-#         risk = f"low risk"
-#     else:
-#         risk = f"minimal risk"
-    
-
-    # return risk, value_redemptions, num_positions
-
 def analyse_volume(positions_data, closed_positions, redemptions_data):
     all_positions = positions_data + closed_positions
     num_positions = len(all_positions)

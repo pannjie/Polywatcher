@@ -2,12 +2,12 @@
   import Tabs from './tabs.svelte';
   let { data } = $props();
   const colours = [
-    "rgba(59, 109, 17, 0.7)",
-    "rgba(151, 196, 89, 0.7)",
-    "rgba(239, 159, 39, 0.7)",
-    "rgba(239, 159, 39, 0.7)",
-    "rgba(226, 75, 74, 0.7)",
-    "rgba(163, 45, 45, 0.7)"
+    "rgba(59, 109, 17, 0.7)",   // minimal 
+    "rgba(59, 109, 17, 0.4)",   // low 
+    "rgba(239, 199, 39, 0.7)",  // medium 
+    "rgba(239, 159, 39, 0.7)",  // high 
+    "rgba(163, 45, 45, 0.5)",   // very high 
+    "rgba(163, 45, 45, 0.8)"    // extreme 
   ]
 
   function getColour(value) {
@@ -40,7 +40,7 @@
 
 <div class="flex gap-8 p-8">
 
-  <div id="profile" class="w-1/2 bg-white">
+  <div id="profile" class="w-1/3 bg-white">
           
 
           <div class="overflow-x-auto">
@@ -67,7 +67,7 @@
          </div> 
 
           
-  <div id="analysis" class="w-1/2 bg-white">
+  <div id="analysis" class="w-2/3 bg-white">
   
           <div class="overflow-x-auto">
             <table class="table">
@@ -81,33 +81,32 @@
                 <tr>
                   <th>Param</th>
                   <th>Result</th>
+                  <th>Risk</th>
                 </tr>
               </thead>
               <tbody>
-                
-                <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}</td></tr>
-            
-                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td></tr>
 
-                <tr><td>Volume/Redemption Ratio</td><td style="background-color:{getColour(data.volume_risk)}"> ${data.value_redemptions} across {data.num_positions} positions</td></tr>
+                <tr><td>Market Spread</td><td>{data.spread_analysis}</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_risk}</td></tr>
 
-                <tr><td>Profit/loss</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk} / ${data.total_profit}</td></tr>
+                <tr><td>Creation/Cashout Gap</td><td>{data.time_gap}</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
 
-                <tr><td>Success rate</td><td style="background-color:{getColour(data.success_risk)}">{data.success_rate} / ({data.success_count}W / {data.failure_count}L)</td></tr>
+                <tr><td>Volume/Redemption Ratio</td><td>${data.value_redemptions} across {data.num_positions} positions</td><td style="background-color:{getColour(data.volume_risk)}">{data.volume_risk}</td></tr>
 
+                <tr><td>Profit/loss</td><td>${data.total_profit}</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk}</td></tr>
 
-                <tr><td>High-frequency trading</td><td>{data.high_frequency}</td></tr>
+                <tr><td>Success rate</td><td>{data.success_rate}% ({data.success_count}W / {data.failure_count}L)</td><td style="background-color:{getColour(data.success_risk)}">{data.success_risk}</td></tr>
 
-                <tr><td>Position size</td><td style="background-color:{getColour(data.size_deviation_risk)}">{data.size_deviation}σ (avg: {data.average_size})</td></tr>
+                <tr><td>High-frequency trading</td><td>{data.high_frequency}</td><td></td></tr>
 
-                <tr><td>Initial Deposit</td><td style="background-color:{getColour(data.sum_input_risk)}">${data.sum_input}</td></tr>
+                <tr><td>Position size</td><td>{data.size_deviation}σ (avg: {data.average_size})</td><td style="background-color:{getColour(data.size_deviation_risk)}">{data.size_deviation_risk}</td></tr>
 
-                <tr><td>48hr Deposit</td><td style="background-color:{getColour(data.sum_input_48hr_risk)}">{data.sum_input_48hr}</td></tr>
+                <tr><td>Initial Deposit</td><td>${data.sum_input}</td><td style="background-color:{getColour(data.sum_input_risk)}">{data.sum_input_risk}</td></tr>
 
-                <tr><td>24hr Deposit</td><td style="background-color:{getColour(data.sum_input_24hr_risk)}">{data.sum_input_24hr}</td></tr>
+                <tr><td>48hr Deposit</td><td>${data.sum_input_48hr}</td><td style="background-color:{getColour(data.sum_input_48hr_risk)}">{data.sum_input_48hr_risk}</td></tr>
 
-                <tr><td>Deposit/Withdrawal</td><td
-                style="background-color:{getColour(data.chain_gap)}">{data.sum_input_48hr} / ${data.chain_output} out</td></tr>
+                <tr><td>24hr Deposit</td><td>${data.sum_input_24hr}</td><td style="background-color:{getColour(data.sum_input_24hr_risk)}">{data.sum_input_24hr_risk}</td></tr>
+
+                <tr><td>Deposit/Withdrawal</td><td>${data.sum_input_48hr} in / ${data.chain_output} out</td><td style="background-color:{getColour(data.chain_gap)}">{data.chain_gap}</td></tr>
               </tbody>
             </table>
           </div>
