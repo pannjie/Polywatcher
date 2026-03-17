@@ -80,20 +80,20 @@ async def user_raw(address: str):
             "redemptions": redemptions,
             "pnl": pnl,
             #1 SPREAD ANALYSIS
-            "spread_analysis": spread_analysis,
+            "spread_analysis": round(spread_analysis, 2),
             "spread_risk": spread_risk,
             #2 TIME GAP ANALYSIS
             "time_gap": time_gap,
             "time_gap_risk": time_gap_risk,
             #3 VOLUME ANALYSIS
             "volume_risk": volume_risk,
-            "value_redemptions": value_redemptions,
+            "value_redemptions": round(value_redemptions, 2),
             "num_positions": num_positions,
             #4 PROFIT ANALYSIS
-            "total_profit": total_profit,
+            "total_profit": round(total_profit, 2),
             "profit_risk": profit_risk,
             #5 SUCCESS RATE ANALYSIS
-            "success_rate": success_rate,
+            "success_rate": round(success_rate, 2),
             "success_count": success_count,
             "failure_count": failure_count,
             "success_risk": success_risk,
@@ -107,20 +107,20 @@ async def user_raw(address: str):
             "average_size": average_size,
 
             # BLOCKCHAIN FIRST 20 TX ANALYSIS
-            "sum_input": sum_input,
+            "sum_input": round(sum_input, 2),
             "sum_input_risk": sum_input_risk,
 
             # BLOCKCHAIN FIRST 48HR ANALYSIS
-            "sum_input_48hr": sum_input_48hr,
+            "sum_input_48hr": round(sum_input_48hr, 2),
             "sum_input_48hr_risk": sum_input_48hr_risk,
 
             # BLOCKCHAIN FIRST 24HR ANALYSIS
-            "sum_input_24hr": sum_input_24hr,
+            "sum_input_24hr": round(sum_input_24hr, 2),
             "sum_input_24hr_risk": sum_input_24hr_risk,
 
             # BLOCKCHAIN GAP ANALYSIS
             "chain_gap": chain_gap_result,
-            "chain_output": withdrawal_48hr,
+            "chain_output": round(withdrawal_48hr, 2),
 
             "chain_raw": chain.get("result", [])
         }

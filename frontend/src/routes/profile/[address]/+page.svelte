@@ -90,9 +90,9 @@
               </thead>
               <tbody>
 
-                <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_risk}</td></tr>
+                <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}%</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_risk}</td></tr>
 
-                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
+                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap} Days</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
 
                 <tr><td>Volume/Redemption Ratio</td><td style="background-color:{getColour(data.volume_risk)}">${data.value_redemptions} across {data.num_positions} positions</td><td style="background-color:{getColour(data.volume_risk)}">{data.volume_risk}</td></tr>
 
