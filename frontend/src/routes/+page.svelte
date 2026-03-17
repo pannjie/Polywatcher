@@ -15,7 +15,7 @@
   <p class="label">Developed by PJ/Goldsmiths</p>
 </fieldset>
 
-<div class="flex flex-col items-center gap-2 mt-8">
+<div class="flex flex-col items-center gap-2 mt-16">
   <div class="flex gap-2">
     <a class="btn btn-outline btn-sm" href="https://polywatcherfrontend-production.up.railway.app/profile/0x44de2a52d8d2d3ddcf39d58e315a10df53ba9c08">Maduro Whale</a>
     <a class="btn btn-outline btn-sm" href="https://polywatcherfrontend-production.up.railway.app/profile/0x94a428cfa4f84b264e01f70d93d02bc96cb36356">George Cottrell</a>
