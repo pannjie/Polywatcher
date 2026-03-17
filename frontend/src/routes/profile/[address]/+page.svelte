@@ -31,10 +31,14 @@
 
 </script>
 
+<div class="drawer drawer-end">
+<input id="profile-drawer" type="checkbox" class="drawer-toggle" />
+<div class="drawer-content">
+
 <div class="flex justify-between navbar bg-base-100 h-20 shadow-sm">
   <a href="/" class="font-black text-xl p-8 no-underline text-inherit">Polywatcher</a>
   <input type="text" class="input h-10 w-100 border-2 border-black " placeholder="Enter Wallet Address" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
-  <p class="font-black text-xl p-8" >v.2.1</p>
+  <label for="profile-drawer" class="font-black text-xl p-8 cursor-pointer">Info</label>
 </div>
 
 
@@ -118,7 +122,15 @@
 
 <Tabs {data} />
 
+</div>
 
+<div class="drawer-side">
+  <label for="profile-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+  <div class="bg-base-100 min-h-full w-80 p-4">
+  </div>
+</div>
+
+</div>
 <!-- {#if data}
   <h1>{data.creator?.name ?? data.creator?.proxyWallet ?? 'Unknown'}</h1>
   <p><strong>Username:</strong> {data.creator?.pseudonym ?? ''}</p>
