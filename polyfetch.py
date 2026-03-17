@@ -248,7 +248,8 @@ def get_timegap(redemptions_data, creator_data):
     creator_time = creator_data.get('createdAt')
     creator_time = datetime.datetime.fromisoformat(creator_time).timestamp()
 
-    first_redemption = next((redemption for redemption in redemptions_data if redemption.get("usdcSize", 0) > 10000), None)
+    sorted_redemptions = sorted(redemptions_data, key=lambda x: x.get("timestamp", 0))
+    first_redemption = next((redemption for redemption in sorted_redemptions if redemption.get("usdcSize", 0) > 10000), None)
 
     if first_redemption is None:
         return None
