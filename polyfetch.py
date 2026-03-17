@@ -56,15 +56,20 @@ async def user_raw(address: str):
 
         high_frequency = high_frequency_check(activity)
 
-        profit_size, average_size = analyse_relative_size(positions)
+        size_deviation, average_size = analyse_relative_size(positions, closed_positions)
+        size_deviation_risk = analyse_relative_size_risk(size_deviation)
 
-        chain_analysis, chain_total = analyse_chain(chain, address)
+        sum_input = analyse_chain(chain, address)
+        sum_input_risk = analyse_chain_risk(sum_input)
 
-        chain_analysis_2, input_data_48 = analyse_chain_48hr(chain, address)
+        sum_input_48hr = analyse_chain_48hr(chain, address)
+        sum_input_48hr_risk = analyse_chain_48hr_risk(sum_input_48hr)
 
-        chain_analysis_3, _ = analyse_chain_24hr(chain, address)
+        sum_input_24hr = analyse_chain_24hr(chain, address)
+        sum_input_24hr_risk = analyse_chain_24hr_risk(sum_input_24hr)
         
-        chain_gap_result, chain_output = chain_gap(chain, input_data_48, address)
+        withdrawal_48hr = chain_gap(chain, address)
+        chain_gap_result = chain_gap_risk(withdrawal_48hr, sum_input_48hr)
 
         return {
             #raw
@@ -96,17 +101,27 @@ async def user_raw(address: str):
             #6 HIGH FREQUENCY ANALYSIS
             "high_frequency": high_frequency,
 
-
-            "profit_size": profit_size,
+            #SIZE DEVIATION ANALYSIS
+            "size_deviation": size_deviation,
+            "size_deviation_risk": size_deviation_risk,
             "average_size": average_size,
 
+            # BLOCKCHAIN FIRST 20 TX ANALYSIS
+            "sum_input": sum_input,
+            "sum_input_risk": sum_input_risk,
 
-            "chain_analysis": chain_analysis,
-            "chain_total": chain_total,
-            "chain_analysis_2": chain_analysis_2,
-            "chain_analysis_3": chain_analysis_3,
+            # BLOCKCHAIN FIRST 48HR ANALYSIS
+            "sum_input_48hr": sum_input_48hr,
+            "sum_input_48hr_risk": sum_input_48hr_risk,
+
+            # BLOCKCHAIN FIRST 24HR ANALYSIS
+            "sum_input_24hr": sum_input_24hr,
+            "sum_input_24hr_risk": sum_input_24hr_risk,
+
+            # BLOCKCHAIN GAP ANALYSIS
             "chain_gap": chain_gap_result,
-            "chain_output": chain_output,
+            "chain_output": withdrawal_48hr,
+
             "chain_raw": chain.get("result", [])
         }
     except Exception as e:
@@ -316,7 +331,7 @@ def analyse_volume_risk(value_redemptions, closed_positions, positions_data):
 def analyse_profits(pnl_data):
     total_profit = 0
     for pnl in pnl_data:
-        total_profit += int(pnl.get("realizedPnl" or 0)) / 1e6
+        total_profit += int(pnl.get("realizedPnl") or 0) / 1e6
     return total_profit
   
     
@@ -343,9 +358,9 @@ def analyse_success(pnl_data):
     success = 0
     failure = 0
     for pnl in pnl_data:
-        if int(pnl.get("realizedPnl" or 0)) > 0:
+        if int(pnl.get("realizedPnl") or 0) > 0:
             success += 1
-        elif int(pnl.get("realizedPnl" or 0)) < 0:
+        elif int(pnl.get("realizedPnl") or 0) < 0:
             failure += 1
     if success + failure == 0:
         return 0, 0, 0
@@ -391,54 +406,69 @@ def high_frequency_check(activity_data):
 
 #checks if the positions is unusually large compared to other positions made by the user. If X bets 500,000 on a market when he usually bets less than 50,000, flag it as potential insider trade.
 
-def analyse_relative_size(positions_data):
-    if not positions_data:
-        return 'minimal risk', 0
+def analyse_relative_size(positions_data, closed_positions):
+    all_positions = positions_data + closed_positions
+    if not all_positions:
+        return 0, 0
 
-    sizes = [p.get("size", 0) for p in positions_data]
-    values = [p.get("currentValue", 0) for p in positions_data]
+    sizes = [p.get("size", 0) for p in all_positions]
+    values = [p.get("currentValue", 0) for p in all_positions]
 
     median_size = statistics.median(sizes)
     median_value = statistics.median(values)
     mad_size = statistics.median([abs(s - median_size) for s in sizes])
     mad_value = statistics.median([abs(v - median_value) for v in values])
-    #this needs to filter only the wins, not all positions - if the user has a large loss, it should not be flagged as insider trading.
 
-    result = ' '
     average_size = statistics.mean(sizes)
 
-    for position in positions_data:
+    max_deviation = 0
+    for position in all_positions:
         size = position.get("size", 0)
         value = position.get("currentValue", 0)
-        if size > median_size + 3 * mad_size and value > median_value + 3 * mad_value:
-            return 'high risk', average_size
-        elif size > median_size + 2 * mad_size and value > median_value + 2 * mad_value:
-            result = 'medium risk'
-        elif size > median_size + mad_size and value > median_value + mad_value and result == 'minimal risk':
-            result = 'low risk'
-    return result, average_size
-     
+        if mad_size > 0 and mad_value > 0:
+            deviation = ((size - median_size) / mad_size + (value - median_value) / mad_value) / 2
+            max_deviation = max(max_deviation, deviation)
+
+    return round(max_deviation, 2), round(average_size, 2)
+
+def analyse_relative_size_risk(size_deviation):
+    if size_deviation > 3:
+        return "extreme risk"
+    elif size_deviation > 2.5:
+        return "very high risk"
+    elif size_deviation > 2:
+        return "high risk"
+    elif size_deviation > 1.5:
+        return "medium risk"
+    elif size_deviation > 1:
+        return "low risk"
+    else:
+        return "minimal risk"
+
 #checks the first trades into the proxy wallet. if the cumulative value of the first 20 trades is above X USD, flag the account for suspicious activity.
 def analyse_chain(chain_data, address):
     input_data = []
     for tx in chain_data.get("result",[])[:20]:
         if tx.get("to", "").lower() == address.lower():
             input_data.append(int(tx.get("value", 0)) / 1e6)
+    sum_input = sum(input_data)
+    return sum_input
 
-    result = ' '
-    if sum(input_data) > 50000:
-        result = "high risk"
-    elif sum(input_data) > 25000:
-        result = "medium risk"
-    elif sum(input_data) > 10000:
-        result = "low risk"
+def analyse_chain_risk(sum_input):
+    if sum_input > 100000:
+        return "extreme risk"
+    elif sum_input > 75000:
+        return "very high risk"
+    elif sum_input > 50000:
+        return "high risk"
+    elif sum_input > 25000:
+        return "medium risk"
+    elif sum_input > 10000:
+        return "low risk"
     else:        
-        result = "minimal risk"
-
-    return result, sum(input_data)
+        return "minimal risk"
 
 #analyse the amount uploaded to the proxy wallet in its first 24/48 hours. if the amount is above X USD, flag the account for suspicious activity.
-
 def analyse_chain_48hr(chain_data, address):
     input_data_48 = []
     first_timestamp = None
@@ -449,15 +479,23 @@ def analyse_chain_48hr(chain_data, address):
                 first_timestamp = timestamp
             if timestamp - first_timestamp < 172800:  
                 input_data_48.append(int(tx.get("value", 0)) / 1e6)
+    sum_input_48 = sum(input_data_48)
+    return sum_input_48
 
-    if sum(input_data_48) > 50000:
-        return "high risk", input_data_48
-    elif sum(input_data_48) > 25000:
-        return "medium risk", input_data_48
-    elif sum(input_data_48) > 10000:
-        return "low risk", input_data_48
+def analyse_chain_48hr_risk(input_data_48):
+    if input_data_48 > 100000:
+        return "extreme risk" 
+    elif input_data_48 > 75000:
+        return "very high risk" 
+    elif input_data_48 > 50000:
+        return "high risk" 
+    elif input_data_48 > 25000:
+        return "medium risk" 
+    elif input_data_48 > 10000:
+        return "low risk" 
     else:        
-        return "minimal risk", input_data_48
+        return "minimal risk"
+
     
 def analyse_chain_24hr(chain_data, address):
     input_data_24 = []
@@ -467,21 +505,26 @@ def analyse_chain_24hr(chain_data, address):
             timestamp = int(tx.get("timeStamp", 0))
             if first_timestamp is None:
                 first_timestamp = timestamp
-            if timestamp - first_timestamp < 86400:  
+            if timestamp - first_timestamp < 86400:
                 input_data_24.append(int(tx.get("value", 0)) / 1e6)
+    return sum(input_data_24)
 
-    if sum(input_data_24) > 50000:
-        return "high risk", input_data_24
-    elif sum(input_data_24) > 25000:
-        return "medium risk", input_data_24
-    elif sum(input_data_24) > 10000:
-        return "low risk", input_data_24
-    else:        
-        return "minimal risk", input_data_24
+def analyse_chain_24hr_risk(sum_input_24):
+    if sum_input_24 > 50000:
+        return "extreme risk"
+    elif sum_input_24 > 25000:
+        return "very high risk"
+    elif sum_input_24 > 12500:
+        return "high risk"
+    elif sum_input_24 > 6250:
+        return "medium risk"
+    elif sum_input_24 > 3125:
+        return "low risk"
+    else:
+        return "minimal risk"
 
-def chain_gap(chain_data, input_data_48, address):
+def chain_gap(chain_data, address):
     # Anchor the 48hr window to the first deposit (input), not first withdrawal
-    # AI
     first_input_timestamp = None
     for tx in chain_data.get("result", []):
         if tx.get("to", "").lower() == address.lower():
@@ -497,18 +540,40 @@ def chain_gap(chain_data, input_data_48, address):
                 if timestamp - first_input_timestamp < 172800 and value > 2000:
                     output_48hr.append(value)
 
-   #value > 5000 indicates that it is a withdrawal to a hot wallet or a GSN, rather than a new txn or trade. This is to avoid flagging users who make a large deposit, but then make a few small trades, which is not necessarily suspicious.
-    results = ""
-    if sum(input_data_48) > 50000  and (sum(output_48hr) > 50000 or len(output_48hr) > 10):
-        results = "high risk"
-    elif sum(input_data_48) > 25000 and (sum(output_48hr) > 25000 or len(output_48hr) > 5):
-        results = 'medium risk'
-    elif sum(input_data_48) > 10000 and (sum(output_48hr) > 10000 or len(output_48hr) > 2):
-        results = 'low risk'
-    else:        
-        results = 'minimal risk'
+    withdrawal_48hr = sum(output_48hr)
+    return withdrawal_48hr 
 
-    return results, sum(output_48hr)
+def chain_gap_risk(withdrawal_48hr, sum_input_48hr):
+    result = ''
+    if sum_input_48hr > 100000 and withdrawal_48hr > 100000:
+        result = "extreme risk"
+    elif sum_input_48hr > 75000 and withdrawal_48hr > 75000:
+        result = "very high risk"
+    elif sum_input_48hr > 50000 and withdrawal_48hr > 50000:
+        result = "high risk"
+    elif sum_input_48hr > 25000 and withdrawal_48hr > 25000:
+        result = "medium risk"
+    elif sum_input_48hr > 10000 and withdrawal_48hr > 10000:
+        result = "low risk"
+    else:        
+        result = "minimal risk"
+    return result
+    
+
+
+
+   #value > 5000 indicates that it is a withdrawal to a hot wallet or a GSN, rather than a new txn or trade. This is to avoid flagging users who make a large deposit, but then make a few small trades, which is not necessarily suspicious.
+    # results = ""
+    # if sum(input_data_48) > 50000  and (sum(output_48hr) > 50000 or len(output_48hr) > 10):
+    #     results = "high risk"
+    # elif sum(input_data_48) > 25000 and (sum(output_48hr) > 25000 or len(output_48hr) > 5):
+    #     results = 'medium risk'
+    # elif sum(input_data_48) > 10000 and (sum(output_48hr) > 10000 or len(output_48hr) > 2):
+    #     results = 'low risk'
+    # else:        
+    #     results = 'minimal risk'
+
+    # return results, sum(output_48hr)
             
 
 if __name__ == "__main__":

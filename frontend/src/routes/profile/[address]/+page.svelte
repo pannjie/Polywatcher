@@ -89,7 +89,7 @@
             
                 <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap}</td></tr>
 
-                <tr><td>Volume/Redemptio Radio</td><td style="background-color:{getColour(data.volume_risk)}"> ${data.value_redemptions} across {data.num_positions} positions</td></tr>
+                <tr><td>Volume/Redemption Ratio</td><td style="background-color:{getColour(data.volume_risk)}"> ${data.value_redemptions} across {data.num_positions} positions</td></tr>
 
                 <tr><td>Profit/loss</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk} / ${data.total_profit}</td></tr>
 
@@ -97,10 +97,17 @@
 
 
                 <tr><td>High-frequency trading</td><td>{data.high_frequency}</td></tr>
-                <tr><td>Position size</td><td>{data.profit_size} (avg: {data.average_size})</td></tr>
-                <tr><td>Initial deposit</td><td>{data.chain_analysis} / ${data.chain_total}</td></tr>
-                <tr><td>24/48hr deposit</td><td>{data.chain_analysis_2} / {data.chain_analysis_3}</td></tr>
-                <tr><td>48hr input/output</td><td>{data.chain_gap} / ${data.chain_output} out</td></tr>
+
+                <tr><td>Position size</td><td style="background-color:{getColour(data.size_deviation_risk)}">{data.size_deviation}σ (avg: {data.average_size})</td></tr>
+
+                <tr><td>Initial Deposit</td><td style="background-color:{getColour(data.sum_input_risk)}">${data.sum_input}</td></tr>
+
+                <tr><td>48hr Deposit</td><td style="background-color:{getColour(data.sum_input_48hr_risk)}">{data.sum_input_48hr}</td></tr>
+
+                <tr><td>24hr Deposit</td><td style="background-color:{getColour(data.sum_input_24hr_risk)}">{data.sum_input_24hr}</td></tr>
+
+                <tr><td>Deposit/Withdrawal</td><td
+                style="background-color:{getColour(data.chain_gap)}">{data.sum_input_48hr} / ${data.chain_output} out</td></tr>
               </tbody>
             </table>
           </div>
