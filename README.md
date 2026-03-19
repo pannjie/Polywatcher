@@ -21,13 +21,13 @@ Prototype for detecting anomalous trading behaviour and potential insider activi
 ### Behavioural Signals
 
 **Market Spread**
-Are bets/trades concentrated in only a small number of markets? Narrow spread may indicate targeted, informed positioning.
+Checks if all of your positions are in the same market. If you're betting exclusively on Iran, the Oscars or who will Trump meet next, the parameter will flag your activity as suspicious.
 
 **Creation / Cash-Out Gap**
-Time elapsed between account creation and first withdrawal. Unusually short gaps may indicate purpose-built accounts.
+Time elapsed between account creation and first 10,000 redemption. Flags accounts that are created shortly before large redemptions.
 
 **Volume / Redemption Ratio**
-Number of positions opened versus volume of redemptions. Disproportionate redemption volume relative to trade count is a flag.
+Number of positions opened versus volume of redemptions. Flags accounts that have made large amounts of money on relatively few positions.
 
 **Profit / Loss Ratio**
 Absolute size of profits relative to losses. High ratio sustained over time is a core insider signal.
@@ -46,10 +46,14 @@ Size of winning positions relative to the trader's other positions. Large asymme
 ### Blockchain Signals
 
 **Initial Deposit Quantity** *(First 20 transactions)*
-Size of the initial deposit into the Polymarket wallet. Large opening deposits into new accounts are a red flag.
+Sum of the first 20 deposits into the Polymarket wallet. Large opening deposits into new accounts are a red flag.
 
 **24 / 48hr Deposit Amount** *(First 48 hours)*
 Total capital deposited into the wallet within the first 24–48 hours of account activity. Rapid large inflows to new accounts warrant investigation.
+
+**Deposit/Withdrawal** *(First 48 hours)*
+Checks the amount entering and leaving the wallet within the first 48 hours. If there's a large capital inflow and equivalent outflow, the wallet will be flagged for suspicious activity.
+
 
 ---
 
