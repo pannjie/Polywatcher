@@ -8,9 +8,10 @@
   <div role="tablist" class="tabs tabs-lift">
   <a onclick={()=> activeTab = 1} role="tab" class="tab font-black" class:tab-active={activeTab ==1}>Activity</a>
   <a onclick={()=> activeTab = 2} role="tab" class="tab font-black" class:tab-active={activeTab ==2}>Positions</a>
-  <a onclick={()=> activeTab = 3} role="tab" class="tab font-black" class:tab-active={activeTab ==3}>Redemptions</a>
-  <a onclick={()=> activeTab = 4} role="tab" class="tab font-black" class:tab-active={activeTab ==4}>PnL</a>
-  <a onclick={()=> activeTab = 5} role="tab" class="tab font-black" class:tab-active={activeTab ==5}>Blockchain</a>
+  <a onclick={()=> activeTab = 3} role="tab" class="tab font-black" class:tab-active={activeTab ==3}>Closed Positions</a>
+  <a onclick={()=> activeTab = 4} role="tab" class="tab font-black" class:tab-active={activeTab ==4}>Redemptions</a>
+  <a onclick={()=> activeTab = 5} role="tab" class="tab font-black" class:tab-active={activeTab ==5}>PnL</a>
+  <a onclick={()=> activeTab = 6} role="tab" class="tab font-black" class:tab-active={activeTab ==6}>Blockchain</a>
 </div>
 </div>
 
@@ -48,6 +49,22 @@
   {/if}
 
   {#if activeTab == 3}
+    <table class="table">
+      <thead><tr><th>Title</th><th>Outcome</th><th>Size</th><th>Initial Value</th><th>Current Value</th><th>Cash PnL</th><th>Percent% PnL</th></tr></thead>
+      <tbody>
+        {#each data.closed_positions ?? [] as position}
+          <tr>
+            <td>{position.title}</td><td>{position.outcome}</td><td>{position.size}</td>
+            <td>{position.initialValue}</td><td>{position.currentValue}</td><td>{position.cashPnl}</td><td>{position.percentPnl}</td>
+          </tr>
+        {:else}
+          <tr><td colspan="7">No closed positions data.</td></tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
+
+  {#if activeTab == 4}
      <table class="table">
       <thead><tr><th>Title</th><th>Timestamp</th><th>Size</th><th>Condition Id</th></tr></thead>
       <tbody>
@@ -57,13 +74,13 @@
             <td>{redemption.conditionId}</td>
           </tr>
         {:else}
-          <tr><td colspan="6">No redemption data.</td></tr>
+          <tr><td colspan="4">No redemption data.</td></tr>
         {/each}
       </tbody>
     </table>
   {/if}
 
-  {#if activeTab == 4}
+  {#if activeTab == 5}
     <table class="table">
       <thead><tr><th>Token Id</th><th>Amount</th><th>Avg Price</th><th>Realized Pnl</th><th>Total Bought</th></tr></thead>
       <tbody>
@@ -73,13 +90,13 @@
             <td>{pnl.realizedPnl}</td><td>{pnl.totalBought}</td>
           </tr>
         {:else}
-          <tr><td colspan="6">No PnL data.</td></tr>
+          <tr><td colspan="5">No PnL data.</td></tr>
         {/each}
       </tbody>
     </table>
   {/if}
 
-  {#if activeTab == 5}
+  {#if activeTab == 6}
     <table class="table">
       <thead><tr><th>Timestamp</th><th>From</th><th>To</th><th>Value</th><th>Token</th><th>Hash</th></tr></thead>
       <tbody>
