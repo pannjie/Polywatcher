@@ -50,12 +50,12 @@
 
   {#if activeTab == 3}
     <table class="table">
-      <thead><tr><th>Title</th><th>Outcome</th><th>Size</th><th>Initial Value</th><th>Current Value</th><th>Cash PnL</th><th>Percent% PnL</th></tr></thead>
+      <thead><tr><th>Title</th><th>Outcome</th><th>Total Bought</th><th>Avg Price</th><th>Current Price</th><th>Realized PnL</th><th>End Date</th></tr></thead>
       <tbody>
         {#each data.closed_positions ?? [] as position}
           <tr>
-            <td>{position.title}</td><td>{position.outcome}</td><td>{position.size}</td>
-            <td>{position.initialValue}</td><td>{position.currentValue}</td><td>{position.cashPnl}</td><td>{position.percentPnl}</td>
+            <td>{position.title}</td><td>{position.outcome}</td><td>{position.totalBought}</td>
+            <td>{position.avgPrice}</td><td>{position.curPrice}</td><td>{position.realizedPnl}</td><td>{position.endDate}</td>
           </tr>
         {:else}
           <tr><td colspan="7">No closed positions data.</td></tr>
