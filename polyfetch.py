@@ -1,9 +1,12 @@
 import os
 import datetime
+import pandas as pd
 import statistics
 import uvicorn
 import asyncio
 import httpx
+import numpy as np
+from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,9 +19,14 @@ GAMMA_API = "https://gamma-api.polymarket.com"
 DATA_API = "https://data-api.polymarket.com"
 GOLDSKY_URL = "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/pnl-subgraph/0.0.14/gn"
 POLYGONSCAN_API = "https://api.etherscan.io/v2/api"
-# Most likely it's the Goldsky subgraph cold start. The first query to the subgraph takes longer as it warms up. If it exceeds your 30-second timeout, it throws a ReadTimeout, which gets caught by your except Exception and returns an error page. Subsequent queries are faster because the subgraph is already warm.
 
-# You could either increase the timeout or add a simple retry:
+
+# 25 March 2026 
+# Use Leaderboard API to loop through the top accounts, and verify them against the current params
+# Modify the output data for USDC.e and timestamps, to create a more readable format for the end user
+# Integrate more blockchain data for analysis, including their wallet age and interactions with DeFi tools known for money laundering, such as Tornado Cash.
+# Graph Analysis for using wallets as nodes, to see if all wallets within a market are connected.
+
 
 
 
@@ -26,27 +34,73 @@ POLYGONSCAN_API = "https://api.etherscan.io/v2/api"
 async def health():
     return {"status": "ok"}
 
+def get_start_date(chain_data, address):
+    for tx in chain_data.get("result", []):
+        if tx.get("to", "").lower() == address.lower():
+            return int(tx.get("timeStamp", 0))
+    return None
+
+def find_closed_positions(closed_positions_data):
+    df_1 = pd.json_normalize(closed_positions_data)
+    df_1 = df_1.sort_values('realizedPnl', ascending=False)
+    return df_1.head(3)['timestamp'].astype(int).tolist()
+
+def find_event_slug(closed_positions_data):
+    df_1 = pd.json_normalize(closed_positions_data)
+    df_1 = df_1.sort_values('realizedPnl', ascending=False)
+    return df_1.head(3)['eventSlug'].tolist()
+
+def find_event_slug_all(closed_positions_data):
+    df_1 = pd.json_normalize(closed_positions_data)
+    df_1 = df_1.sort_values('realizedPnl', ascending=False)
+    df_1 = df_1[df_1['realizedPnl'] > 0]
+    return df_1['eventSlug'].tolist()
+
+ 
+
 @app.get("/api/user/{address}")
 async def user_raw(address: str):
     try:
-        creator, activity, positions, closed_positions, redemptions, pnl, chain = await asyncio.gather(
+        chain, raw_closed = await asyncio.gather(
+            get_chain(address),
+            get_closed_positions(address),
+        )
+        start_date = get_start_date(chain, address)
+        top_3_timestamps = find_closed_positions(raw_closed)
+        top_3_event_slug = find_event_slug(raw_closed)
+        all_event_slug = find_event_slug_all(raw_closed)
+        # print("raw_closed sample:", raw_closed[:1])
+        # print("top_3_timestamps:", top_3_timestamps)
+
+        creator, activity, positions, closed_positions, redemptions, pnl, activity_timed, *top_activity = await asyncio.gather(
             get_creator(address),
             get_activity(address),
             get_positions(address),
             get_closed_positions(address),
             get_redemptions(address),
             get_pnl(address),
-            get_chain(address)
+            get_activity_2(address, start_date),
+            *[get_activity_3(address, ts) for ts in top_3_timestamps]
         )
 
         spread_analysis = analyse_spread(positions, closed_positions)
         spread_risk = analyse_spread_risk(spread_analysis)
+
+        volume_48hr = volume_gap(activity_timed)
+        volume_48hr_risk = volume_gap_risk(volume_48hr)
 
         time_gap = get_timegap(redemptions, creator)
         time_gap_risk = get_timegap_risk(time_gap)
 
         value_redemptions, num_positions = analyse_volume(positions, closed_positions, redemptions)
         volume_risk = analyse_volume_risk(value_redemptions, closed_positions, positions)
+
+     
+        top_activity_1, top_activity_2, top_activity_3 = analyse_top_activity(top_activity, top_3_event_slug)
+        activity_risk = analyse_top_activity_risk(top_activity_1, top_activity_2, top_activity_3)
+
+        slug_similarity = await analyse_slug_similarity(all_event_slug)
+        slug_similarity_risk = analyse_slug_similarity_risk(slug_similarity)
 
         total_profit = analyse_profits(pnl)
         profit_risk = analyse_profit_risk(total_profit)
@@ -82,13 +136,30 @@ async def user_raw(address: str):
             #1 SPREAD ANALYSIS
             "spread_analysis": round(spread_analysis, 2),
             "spread_risk": spread_risk,
-            #2 TIME GAP ANALYSIS
+            #2 VOLUME GAP ANALYSIS
+            "activity_timed": activity_timed,
+            "volume_48hr": round(volume_48hr, 2),
+            "volume_48hr_risk": volume_48hr_risk,
+            #3 TIME GAP ANALYSIS
             "time_gap": time_gap,
             "time_gap_risk": time_gap_risk,
             #3 VOLUME ANALYSIS
             "volume_risk": volume_risk,
             "value_redemptions": round(value_redemptions, 2),
             "num_positions": num_positions,
+            #PROXIMITY ANALYSIS
+            "top_3_timestamps": top_3_timestamps,
+            "top_3_event_slug": top_3_event_slug,
+            "top_activity": top_activity,
+            "top_activity_1": round(top_activity_1, 2),
+            "top_activity_2": round(top_activity_2, 2),
+            "top_activity_3": round(top_activity_3, 2),
+            "activity_risk": activity_risk,
+            #AI SIMILIARITY ANALYSIS
+            "all_event_slug": all_event_slug,
+            "slug_similarity": slug_similarity,
+            "slug_similarity_risk": slug_similarity_risk,
+
             #4 PROFIT ANALYSIS
             "total_profit": round(total_profit, 2),
             "profit_risk": profit_risk,
@@ -127,6 +198,8 @@ async def user_raw(address: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
     
+
+    
 async def get_chain(address):
     async with httpx.AsyncClient() as client:
         res = await client.get(f'{POLYGONSCAN_API}', params={"module": "account", "action": "tokentx", "address": address, "startblock": 0, "endblock": 99999999, "chainid": 137, "sort": "asc", "apikey": os.getenv("POLYGONSCAN_API_KEY"), "offset": 500, "page": 1})
@@ -155,21 +228,37 @@ async def get_activity(user, limit=1000):
         res = await client.get(f"{DATA_API}/activity", params={"user": user, "limit": limit})
         res.raise_for_status()
         data = res.json()
-        
+
     return data
+
+async def get_activity_2(user, start_date, limit=1000):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/activity", params={"user": user, "side": "BUY", "start": start_date, "end": start_date + 172800, "limit": limit})
+        res.raise_for_status()
+        return res.json()
+    
+async def get_activity_3(user, ts, limit=1000):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/activity", params={"user": user, "side": "BUY", "start": ts - 172800 , "end": ts, "limit": limit})
+        res.raise_for_status()
+        return res.json()
 
 
 async def get_positions(user, limit=1000):
     async with httpx.AsyncClient() as client:
         res = await client.get(f"{DATA_API}/positions", params={"user": user, "limit": limit})
         res.raise_for_status()
-        return res.json()
+        data = res.json()
+
+    return data    
     
 async def get_closed_positions(user, limit=1000):
     async with httpx.AsyncClient() as client:
         res = await client.get(f"{DATA_API}/closed-positions", params={"user": user, "limit": limit})
         res.raise_for_status()
-        return res.json()
+        data = res.json()
+    return data    
+
 
 
 async def get_pnl(address):
@@ -210,6 +299,61 @@ async def get_pnl(address):
             skip += batch_size
 
     return all_positions
+
+
+HF_API_KEY = os.getenv("HF_API_KEY")
+HF_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+hf_client = InferenceClient(api_key=HF_API_KEY)
+
+async def get_embeddings(texts: list[str]):
+    loop = asyncio.get_event_loop()
+    try:
+        embeddings = await loop.run_in_executor(
+            None,
+            lambda: hf_client.feature_extraction(text=texts, model=HF_MODEL)
+        )
+        return embeddings
+    except Exception as e:
+        print(f"HF embedding error: {e}")
+        return None
+
+def cosine_similarity(a, b):
+    a, b = np.array(a), np.array(b)
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+
+async def analyse_slug_similarity(slugs: list[str]):
+    if len(slugs) < 2:
+        return {"avg_similarity": 0, "max_similarity": 0}
+
+    embeddings = await get_embeddings(slugs)
+    if embeddings is None:
+        return {"avg_similarity": 0, "max_similarity": 0}
+
+    scores = []
+    for i in range(len(embeddings)):
+        for j in range(i + 1, len(embeddings)):
+            scores.append(cosine_similarity(embeddings[i], embeddings[j]))
+
+    return {
+        "avg_similarity": round(sum(scores) / len(scores), 4),
+        "max_similarity": round(max(scores), 4)
+    }
+
+def analyse_slug_similarity_risk(slug_similarity):
+    avg = slug_similarity["avg_similarity"]
+    if avg > 0.8:
+        return "extreme risk"
+    elif avg > 0.7:
+        return "very high risk"
+    elif avg > 0.6:
+        return "high risk"
+    elif avg > 0.5:
+        return "medium risk"
+    elif avg > 0.4:
+        return "low risk"
+    else:
+        return "minimal risk"
+
 
 
 #amended to check for all positions, both open and closed.
@@ -520,6 +664,25 @@ def chain_gap(chain_data, address):
     withdrawal_48hr = sum(output_48hr)
     return withdrawal_48hr 
 
+def volume_gap(activity_data):
+    df_1 = pd.json_normalize(activity_data)
+    total_trades = df_1[df_1['side'] == 'BUY']['usdcSize'].sum()
+    return total_trades
+
+def volume_gap_risk(total_trades):
+    if total_trades > 100000:
+        return "extreme risk"
+    elif total_trades > 75000:
+        return "very high risk"
+    elif total_trades > 50000:
+        return "high risk"
+    elif total_trades > 25000:
+        return "medium risk"
+    elif total_trades > 10000:
+        return "low risk"
+    else:
+        return "minimal risk"
+
 def chain_gap_risk(withdrawal_48hr, sum_input_48hr):
     result = ''
     if sum_input_48hr > 100000 and withdrawal_48hr > 100000:
@@ -536,6 +699,48 @@ def chain_gap_risk(withdrawal_48hr, sum_input_48hr):
         result = "minimal risk"
     return result
     
+def analyse_top_activity(top_activity_data, top_3_event_slug):
+    df_1 = pd.json_normalize(top_activity_data[0]) if top_activity_data[0] else pd.DataFrame()
+    df_2 = pd.json_normalize(top_activity_data[1]) if top_activity_data[1] else pd.DataFrame()
+    df_3 = pd.json_normalize(top_activity_data[2]) if top_activity_data[2] else pd.DataFrame()
+
+    event_1 = top_3_event_slug[0]
+    event_2 = top_3_event_slug[1]
+    event_3 = top_3_event_slug[2]
+
+    total_1 = df_1[df_1['eventSlug'] == event_1]['usdcSize'].sum() if 'eventSlug' in df_1.columns else 0
+    total_2 = df_2[df_2['eventSlug'] == event_2]['usdcSize'].sum() if 'eventSlug' in df_2.columns else 0
+    total_3 = df_3[df_3['eventSlug'] == event_3]['usdcSize'].sum() if 'eventSlug' in df_3.columns else 0
+
+    return total_1, total_2, total_3
+
+def analyse_top_activity_risk(total_1, total_2, total_3):
+    sum_total = total_1 + total_2 + total_3
+    active = 0
+    if total_1 > 5000:
+        active = active + 1
+    if total_2 > 5000:
+        active = active + 1
+    if total_3 > 5000:
+        active = active + 1
+
+    if sum_total > 100000 and active == 3:
+        return "extreme risk"
+    elif sum_total > 75000 and active >= 2:   
+        return "very high risk"
+    elif sum_total > 50000 and active >= 1:
+        return "high risk"
+    elif sum_total > 25000 and active >= 1:
+        return "medium risk"
+    elif sum_total > 10000 and active >= 1:
+        return "low risk"          
+    else:
+        return "minimal risk"
+
+    
+    
+
+
 
 
 
