@@ -42,3 +42,6 @@ uvicorn==0.40.0
 uvloop==0.22.1
 watchfiles==1.1.1
 websockets==16.0
+huggingface_hub==1.11.0
+numpy==2.2.5
+pandas==2.2.3
