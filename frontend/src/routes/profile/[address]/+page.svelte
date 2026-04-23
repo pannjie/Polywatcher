@@ -63,7 +63,8 @@
                 <tr><td>Bio</td><td>{data.creator?.bio ?? ''}</td></tr>
                 <tr><td>Wallet</td><td>{data.creator?.proxyWallet ?? ''}</td></tr>
                 <tr><td>Joined</td><td>{(data.creator?.createdAt ?? '').slice(0, 10)}</td></tr>
-              
+                <tr><td>High Frequency Trader</td><td>{data.high_frequency}</td></tr>
+                <tr><td>AI Similiarity Index</td><td>{data.slug_similarity}</td></tr>
 
               </tbody>
             </table>
@@ -94,15 +95,32 @@
 
                 <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap} Days</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
 
+
+                <tr><td>Creation/Volume</td><td style="background-color:{getColour(data.volume_48hr_risk)}">${data.volume_48hr}</td><td style="background-color:{getColour(data.volume_48hr_risk)}">{data.volume_gap_risk}</td></tr>
+
+                
                 <tr><td>Volume/Redemption Ratio</td><td style="background-color:{getColour(data.volume_risk)}">${data.value_redemptions} across {data.num_positions} positions</td><td style="background-color:{getColour(data.volume_risk)}">{data.volume_risk}</td></tr>
 
                 <tr><td>Profit/loss</td><td style="background-color:{getColour(data.profit_risk)}">${data.total_profit}</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk}</td></tr>
 
                 <tr><td>Success rate</td><td style="background-color:{getColour(data.success_risk)}">{data.success_rate}% ({data.success_count}W / {data.failure_count}L)</td><td style="background-color:{getColour(data.success_risk)}">{data.success_risk}</td></tr>
 
-                <tr><td>High-frequency trading</td><td>{data.high_frequency}</td><td></td></tr>
+                <tr>
+                  <td rowspan="3">Proximity Analysis</td>
+                  <td style="background-color:{getColour(data.activity_risk)}">{data.top_3_event_slug[0]}: ${data.top_activity_1}</td>
+                  <td rowspan="3" style="background-color:{getColour(data.activity_risk)}">{data.activity_risk}</td>
+                </tr>
+                <tr>
+                  <td style="background-color:{getColour(data.activity_risk)}">{data.top_3_event_slug[1]}: ${data.top_activity_2}</td>
+                </tr>
+                <tr>
+                  <td style="background-color:{getColour(data.activity_risk)}">{data.top_3_event_slug[2]}: ${data.top_activity_3}</td>
+                </tr>
+
 
                 <tr><td>Position size</td><td style="background-color:{getColour(data.size_deviation_risk)}">{data.size_deviation}σ (avg: {data.average_size})</td><td style="background-color:{getColour(data.size_deviation_risk)}">{data.size_deviation_risk}</td></tr>
+
+          
 
                 <tr><td>Initial Deposit</td><td style="background-color:{getColour(data.sum_input_risk)}">${data.sum_input}</td><td style="background-color:{getColour(data.sum_input_risk)}">{data.sum_input_risk}</td></tr>
 

@@ -323,24 +323,21 @@ def cosine_similarity(a, b):
 
 async def analyse_slug_similarity(slugs: list[str]):
     if len(slugs) < 2:
-        return {"avg_similarity": 0, "max_similarity": 0}
+        return 0
 
     embeddings = await get_embeddings(slugs)
     if embeddings is None:
-        return {"avg_similarity": 0, "max_similarity": 0}
+        return 0
 
     scores = []
     for i in range(len(embeddings)):
         for j in range(i + 1, len(embeddings)):
             scores.append(cosine_similarity(embeddings[i], embeddings[j]))
 
-    return {
-        "avg_similarity": round(sum(scores) / len(scores), 4),
-        "max_similarity": round(max(scores), 4)
-    }
+    return round(sum(scores) / len(scores), 3)
 
 def analyse_slug_similarity_risk(slug_similarity):
-    avg = slug_similarity["avg_similarity"]
+    avg = slug_similarity
     if avg > 0.8:
         return "extreme risk"
     elif avg > 0.7:
