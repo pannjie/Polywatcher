@@ -13,8 +13,8 @@
 <div class="min-h-screen flex flex-col items-center justify-center">
 <fieldset class="fieldset">
   <legend class="fieldset-legend font-black text-5xl">Polywatcher v.2.1</legend>
-  {#if navigating}
-    <span class="loading loading-bars loading-xl"></span>
+  {#if navigating.to}
+    <div class="flex justify-center w-100"><span class="loading loading-bars loading-xl"></span></div>
   {:else}
     <input type="text" class="input h-12 w-100 border-2 border-black" placeholder="Type here" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
   {/if}
