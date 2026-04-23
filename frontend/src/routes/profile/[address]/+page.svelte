@@ -96,7 +96,7 @@
                 <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap} Days</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
 
 
-                <tr><td>Creation/Volume</td><td style="background-color:{getColour(data.volume_48hr_risk)}">${data.volume_48hr}</td><td style="background-color:{getColour(data.volume_48hr_risk)}">{data.volume_gap_risk}</td></tr>
+                <tr><td>Creation/Volume</td><td style="background-color:{getColour(data.volume_48hr_risk)}">${data.volume_48hr}</td><td style="background-color:{getColour(data.volume_48hr_risk)}">{data.volume_48hr_risk}</td></tr>
 
                 
                 <tr><td>Volume/Redemption Ratio</td><td style="background-color:{getColour(data.volume_risk)}">${data.value_redemptions} across {data.num_positions} positions</td><td style="background-color:{getColour(data.volume_risk)}">{data.volume_risk}</td></tr>
@@ -147,6 +147,14 @@
   <div class="bg-base-100 min-h-full w-80 p-4">
     <p class="font-black text-xl mb-4">Analysis Guide</p>
     <div class="divider"></div>
+    <p class="font-bold">High Frequency Trading</p>
+    <p class="text-sm mb-3">Checks the time gap between each trade in the activity API endpoint. More than 10 trades less than 1s apart indicates high frequency trading.</p>
+    <div class="divider"></div>
+    
+    <p class="font-bold">AI Similarity Index</p>
+    <p class="text-sm mb-3">Analyses event slugs from the closed_positions API endpoint using HuggingFace sentence transformer. 1 = completely identical. 0 = completely unrelated</p>
+    <div class="divider"></div>
+   
     <p class="font-bold">Market Spread</p>
     <p class="text-sm mb-3">Checks what percentage of the user's open and closed positions are in the same market. A higher percentage indicates higher risk.</p>
     <div class="divider"></div>
