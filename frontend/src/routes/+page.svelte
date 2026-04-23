@@ -1,6 +1,7 @@
 <script>
-  import { navigating, goto } from '$app/navigation';
-  let address = '';
+  import { navigating } from '$app/state';
+  import { goto } from '$app/navigation';
+  let address = $state('');
 
   function search() {
     if (address.trim()) {
@@ -12,7 +13,7 @@
 <div class="min-h-screen flex flex-col items-center justify-center">
 <fieldset class="fieldset">
   <legend class="fieldset-legend font-black text-5xl">Polywatcher v.2.1</legend>
-  {#if $navigating}
+  {#if navigating}
     <span class="loading loading-bars loading-xl"></span>
   {:else}
     <input type="text" class="input h-12 w-100 border-2 border-black" placeholder="Type here" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>

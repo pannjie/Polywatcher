@@ -1,6 +1,7 @@
 <script>
   import Tabs from './tabs.svelte';
-  import {navigating, goto} from '$app/navigation';
+  import { navigating } from '$app/state';
+  import { goto } from '$app/navigation';
 
   let { data } = $props();
   const colours = [
@@ -24,7 +25,7 @@
     else return '#FFFFFF';
   }
 
-  let address = '';
+  let address = $state('');
 
   function search() {
     if (address.trim()) {
@@ -41,7 +42,7 @@
 
 <div class="flex justify-between navbar bg-base-100 h-20 shadow-sm">
   <a href="/" class="font-black text-xl p-8 no-underline text-inherit">Polywatcher</a>
-  {#if $navigating}
+  {#if navigating}
     <span class="loading loading-bars loading-xl"></span>
   {:else}
     <input type="text" class="input h-10 w-100 border-2 border-black " placeholder="Enter Wallet Address" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
