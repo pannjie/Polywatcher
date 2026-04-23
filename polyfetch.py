@@ -8,6 +8,8 @@ import httpx
 import numpy as np
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
+from db.db import insert_wallet, metadata, engine
+
 
 load_dotenv()
 
@@ -198,7 +200,26 @@ async def user_raw(address: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
     
+@app.get("/api/leaderboard")
+async def leaderboard():
+    data = await get_leaderboard()
+    metadata.create_all(engine)
+    for entry in data:
+        insert_wallet(
+            rank=entry.get("rank"),
+            username=entry.get("userName"),
+            proxywallet=entry.get("proxyWallet"),
+            pnl=entry.get("pnl", 0),
+            vol=entry.get("vol", 0)
+        )
+    return data
 
+async def get_leaderboard():
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DATA_API}/v1/leaderboard", params={"category": "OVERALL", "timePeriod": "DAY", "orderBy": "PNL", "limit": 25})
+        res.raise_for_status()
+        leaderboard = res.json()
+        return leaderboard
     
 async def get_chain(address):
     async with httpx.AsyncClient() as client:
@@ -210,7 +231,7 @@ async def get_chain(address):
 
 async def get_creator(address):
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"{GAMMA_API}/public-profile", params={"address": address})
+        res = await client.get(f"{GAMMA_API}/public-profile", params={"category":"OVERALL", "timePeriod": "DAY", "orderBY": "PNL"})
         res.raise_for_status()
         data = res.json()
 
@@ -734,7 +755,9 @@ def analyse_top_activity_risk(total_1, total_2, total_3):
     else:
         return "minimal risk"
 
-    
+
+
+        
     
 
 

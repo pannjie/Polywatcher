@@ -45,3 +45,5 @@ websockets==16.0
 huggingface_hub==1.11.0
 numpy==2.2.5
 pandas==2.2.3
+sqlalchemy==2.0.49
+psycopg2-binary==2.9.12

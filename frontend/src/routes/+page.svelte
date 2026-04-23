@@ -12,7 +12,7 @@
 
 <div class="min-h-screen flex flex-col items-center justify-center">
 <fieldset class="fieldset">
-  <legend class="fieldset-legend font-black text-5xl">Polywatcher v.2.1</legend>
+  <legend class="fieldset-legend font-black text-5xl">Polywatcher v.2.2</legend>
   {#if navigating.to}
     <div class="flex justify-center w-100"><span class="loading loading-bars loading-xl"></span></div>
   {:else}
