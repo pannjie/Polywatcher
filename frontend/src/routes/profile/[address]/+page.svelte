@@ -1,5 +1,7 @@
 <script>
   import Tabs from './tabs.svelte';
+  import {navigating, goto} from '$app/navigation';
+
   let { data } = $props();
   const colours = [
     "rgba(59, 109, 17, 0.7)",   // minimal 
@@ -9,6 +11,8 @@
     "rgba(163, 45, 45, 0.5)",   // very high 
     "rgba(163, 45, 45, 0.8)"    // extreme 
   ]
+
+ 
 
   function getColour(value) {
     if (value == 'minimal risk') return colours[0];
@@ -24,7 +28,7 @@
 
   function search() {
     if (address.trim()) {
-      window.location.href = `/profile/${address.trim()}`;
+      goto (`/profile/${address.trim()}`);
     }
   }
 
@@ -37,7 +41,11 @@
 
 <div class="flex justify-between navbar bg-base-100 h-20 shadow-sm">
   <a href="/" class="font-black text-xl p-8 no-underline text-inherit">Polywatcher</a>
-  <input type="text" class="input h-10 w-100 border-2 border-black " placeholder="Enter Wallet Address" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
+  {#if $navigating}
+    <span class="loading loading-bars loading-xl"></span>
+  {:else}
+    <input type="text" class="input h-10 w-100 border-2 border-black " placeholder="Enter Wallet Address" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
+  {/if}  
   <label for="profile-drawer" class="font-black text-xl p-8 cursor-pointer">Info</label>
 </div>
 
