@@ -231,7 +231,7 @@ async def get_chain(address):
 
 async def get_creator(address):
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"{GAMMA_API}/public-profile", params={"category":"OVERALL", "timePeriod": "DAY", "orderBY": "PNL"})
+        res = await client.get(f"{GAMMA_API}/public-profile", params={"address": address})
         res.raise_for_status()
         data = res.json()
 
