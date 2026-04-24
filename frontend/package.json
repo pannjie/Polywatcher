@@ -10,6 +10,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"start": "node build"
 	},
+	"engines": {
+		"node": ">=20"
+	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/kit": "^2.50.2",

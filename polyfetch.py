@@ -202,6 +202,10 @@ async def user_raw(address: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Could not fetch data for address {address}. Error: {e}")
     
+@app.get("/api/leaderboard-results")
+async def leaderboard_results():
+    return get_wallets()
+
 @app.get("/api/leaderboard")
 async def leaderboard():
     data = await get_leaderboard()

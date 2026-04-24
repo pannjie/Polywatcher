@@ -47,7 +47,24 @@ def insert_wallet(rank, username, proxywallet, pnl, vol,
 
 def get_wallets():
     result = connection.execute(wallets_table.select())
-    return [{"rank": row.rank, "proxywallet": row.proxywallet} for row in result]
+    return [
+        {
+            "rank": row.rank,
+            "username": row.username,
+            "proxywallet": row.proxywallet,
+            "pnl": row.pnl,
+            "vol": row.vol,
+            "market_spread": row._mapping["Market Spread"],
+            "wallet_age": row._mapping["Wallet Age"],
+            "cashout_gap": row._mapping["Creation/Cashout Gap"],
+            "creation_volume": row._mapping["Creation/Volume"],
+            "success_rate": row._mapping["Success Rate"],
+            "position_size": row._mapping["Position Size"],
+            "deposits_24h": row._mapping["24h Deposits"],
+            "ai_similarity": row._mapping["AI Similarity Score"],
+        }
+        for row in result
+    ]
 
 if __name__ == "__main__":
     metadata.create_all(engine)
