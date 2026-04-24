@@ -8,7 +8,7 @@ import httpx
 import numpy as np
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
-from db.db import insert_wallet, metadata, engine
+from db.db import insert_wallet, get_wallets, metadata, engine
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from contextlib import asynccontextmanager
 
@@ -24,15 +24,16 @@ POLYGONSCAN_API = "https://api.etherscan.io/v2/api"
 
 # 25 March 2026
 # Use Leaderboard API to loop through the top accounts, and verify them against the current params
-# Modify the output data for USDC.e and timestamps, to create a more readable format for the end user
+# Modify the output data for USDC.e and timestamps, to create a more readable format for the end user # update: let's just keep the raw data as is, no point making half of it readable and half of it technical.
 # Integrate more blockchain data for analysis, including their wallet age and interactions with DeFi tools known for money laundering, such as Tornado Cash.
-# Graph Analysis for using wallets as nodes, to see if all wallets within a market are connected.
+# Graph Analysis for using wallets as nodes, to see if all wallets within a market are connected. #update: not possible, not meaningful
 
 #kickstart the scheduler to run the leaderboard function every 24 hours, to keep the database updated with the daily top trades.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(leaderboard, "cron", hour=0, minute=0)
+    scheduler.add_job(leaderboard, "cron", hour=3, minute=0)
+    scheduler.add_job(analyse_leaderboard, "cron", hour=3, minute=15)
     scheduler.start()
     yield
     scheduler.shutdown()
@@ -214,6 +215,29 @@ async def leaderboard():
             vol=entry.get("vol", 0)
         )
     return data
+
+@app.get("/api/analyse-leaderboard")
+async def analyse_leaderboard():
+    wallets = get_wallets()
+    for wallet in wallets:
+        await asyncio.sleep(20)
+        try:
+            result = await run_analysis(wallet["proxywallet"])
+            insert_wallet(
+                rank=wallet["rank"], username=None, proxywallet=wallet["proxywallet"],
+                pnl=None, vol=None,
+                market_spread=result.get("spread_analysis"),
+                cashout_gap=result.get("time_gap"),
+                creation_volume=result.get("volume_48hr"),
+                success_rate=result.get("success_rate"),
+                position_size=result.get("size_deviation"),
+                deposits_24h=result.get("sum_input_24hr"),
+                ai_similarity=result.get("slug_similarity"),
+            )
+        except Exception as e:
+            print(f"Failed analysis for {wallet['proxywallet']}: {e}")
+            continue
+    return {"status": "done", "processed": len(wallets)}
 
 async def get_leaderboard():
     async with httpx.AsyncClient() as client:
