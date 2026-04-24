@@ -78,9 +78,9 @@
   <div class="bg-base-100 min-h-full w-80 p-4">
     <p class="font-black text-xl mb-4">About</p>
     <div class="divider"></div>
-    <p class="text-sm">Polywatcher is a journalistic tool for analysing Polymarket for suspicious trading pattenrs. It uses Polymarket's native APIs, the Goldsky Graph APIs and Etherscan for blockchain data. All of the code can be found on my <a href="https://github.com/pannjie/Polywatcher">Github page.</a></p>
+    <p class="text-sm">Polywatcher is a journalistic tool that analyses Polymarket for suspicious trading patterns. It uses Polymarket's native APIs, the Goldsky Graph API, and Etherscan for blockchain data. All of the code can be found on my <a href="https://github.com/pannjie/Polywatcher" class="underline">Github page.</a></p>
     <div class="divider"></div>
-    <p class="text-sm">Developed PJ. A Digital Journalists working out of Goldsmiths. Contact me at pjie001@gold.ac.uk.</p>
+    <p class="text-sm">Developed by PJ. A Digital Journalist working out of Goldsmiths. Contact me at pjie001@gold.ac.uk or connect with me on <a href="https://linkedin.com/in/pan-jie-a70173b2" class="underline">LinkedIn</a></p>
   </div>
 </div>
 </div>
