@@ -75,7 +75,7 @@ def get_wallets():
         connection.rollback()
     except Exception:
         pass
-    result = connection.execute(wallets_table.select())
+    result = connection.execute(wallets_table.select().order_by(sa.cast(wallets_table.c.rank, sa.Integer)))
     return [
         {
             "rank": row.rank,

@@ -57,8 +57,8 @@
     <div class="bg-base-100 min-h-full w-80 p-4">
       <p class="font-black text-xl mb-4">Extras</p>
       <div class="divider"></div>
-      <p class="font-bold">Daily Leaderboard</p>
-      <p class="text-sm mb-3">Today's top wallets, ranked by PNL.</p>
+      <p class="font-bold"><a class="hover:underline" href="/leaderboard">Daily Leaderboard</a></p>
+      <p class="text-sm mb-3">Today's top wallets, ranked by PNL. </p>
       <div class="divider"></div>
       <p class="font-bold">Bitcoin Scams</p>
       <p class="text-sm mb-3">Notable bitcoin promoted on X, Reddit and Discord</p>
