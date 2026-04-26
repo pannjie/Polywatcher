@@ -8,7 +8,7 @@ import httpx
 import numpy as np
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
-from db.db import insert_wallet, get_wallets, metadata, engine
+from db.db import insert_wallet, update_wallet_analysis, get_wallets, metadata, engine
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from contextlib import asynccontextmanager
 
@@ -227,9 +227,8 @@ async def analyse_leaderboard():
         await asyncio.sleep(20)
         try:
             result = await run_analysis(wallet["proxywallet"])
-            insert_wallet(
-                rank=wallet["rank"], username=None, proxywallet=wallet["proxywallet"],
-                pnl=None, vol=None,
+            update_wallet_analysis(
+                proxywallet=wallet["proxywallet"],
                 market_spread=result.get("spread_analysis"),
                 cashout_gap=result.get("time_gap"),
                 creation_volume=result.get("volume_48hr"),
