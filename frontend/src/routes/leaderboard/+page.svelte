@@ -86,7 +86,7 @@
 
   <div class="flex justify-between navbar bg-base-100 h-20">
     <h1 class="text-4xl font-black mb-8">Leaderboard</h1>
-    <a href="/" class="text-2xl font-bold hover:underline">Back to Polywatcher</a>
+    <a href="/" class="text-lg hover:underline mb-8">Back to Polywatcher</a>
   </div>
 
   <div class="overflow-x-auto">
@@ -109,9 +109,9 @@
         {#each wallets as wallet}
           <tr>
             <td>{wallet.rank}</td>
-            <td>
-              <div>{wallet.username ?? '-'}</div>
-              <div class="text-xs text-gray-400 font-mono">{wallet.proxywallet?.slice(0, 10)}...</div>
+            <td class="max-w-37.5">
+              <div class="text-sm truncate">{wallet.username ?? '-'}</div>
+              <div class="text-xs text-gray-400 font-mono truncate">{wallet.proxywallet}</div>
             </td>
             <td>{wallet.pnl != null ? '$' + wallet.pnl.toLocaleString() : '-'}</td>
             <td style="background-color: {getColour(spreadRisk(wallet.market_spread))}">{wallet.market_spread ?? '-'}</td>
