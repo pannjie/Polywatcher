@@ -4,3 +4,5 @@ __pycache__/
 *.csv
 .env
 polyfetch_testing.py
+polymarket_subgraph.py
+sample_response_activity.json
