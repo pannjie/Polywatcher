@@ -31,7 +31,7 @@
         {#if navigating.to}
           <div class="flex justify-center w-100"><span class="loading loading-bars loading-xl"></span></div>
         {:else}
-          <input type="text" class="input h-12 w-100 border-2 border-black" placeholder="Type here" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
+          <input type="text" class="input h-12 w-100 border-2 border-black" placeholder="Enter wallet address" bind:value={address} onkeydown={e => e.key === 'Enter' && search()}/>
         {/if}
         <p class="label">Developed by PJ/Goldsmiths</p>
       </fieldset>
