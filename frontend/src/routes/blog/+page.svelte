@@ -51,7 +51,7 @@
     <div class="divider"></div>
 
     <article>
-      <h2 class="text-xl font-black mb-4">Phase 2: Airwars, Tailwind, GitHub, Daisy UI, Railway Deployment</h2>
+      <h2 class="text-xl font-black mb-4">Phase 2: Airwars, Tailwind, DaisyUI, GitHub, Railway Deployment</h2>
       <p class="text-sm leading-relaxed mb-4">
         My original plan was to slowly refine my Python analysis code till April, then build a beautiful frontend using <a class="underline" href="https://carbondesignsystem.com" target="_blank" rel="noopener noreferrer">IBM Carbon</a>. Unfortunately, this leisurely plan was derailed by me securing an interview with <a class="underline" href="https://airwars.org" target="_blank" rel="noopener noreferrer">Airwars</a>. Not wanting to show up at my meeting with fizzbuzz.py or a Temu AOL website, I started panic-coding a presentable skin over the Python skeleton.
       </p>
@@ -91,7 +91,8 @@
         Unfortunately, I'll have to leave this one to <a class="underline" href="https://investors.palantir.com/news-details/2026/Polymarket-Partners-With-Palantir-and-TWG-AI-to-Build-Next-generation-Sports-Integrity-Platform/" target="_blank" rel="noopener noreferrer">Palantir</a> because the sheer amount of data necessary will break Polywatcher and reduce me to tears. To return a list of wallets linked to the profile is perfectly possible. However, to check every wallet our profile has touched against every market our suspected insider is trading in would result in thousands of synchronous API calls in a rate-limited environment. A real software engineer could find a way, but I was too cowardly to return 100 JSON objects at the same time, analyse their links and visualize the whole hairball with NetworkX.
       </p>
       <figure class="my-6">
-        <a href="/orange.jpeg" target="_blank" rel="noopener noreferrer"><img src="/orange.jpeg" alt="Network graph" class="block w-full rounded" /></a>
+        <a href="/orange.jpg" target="_blank" rel="noopener noreferrer"><img src="/orange.jpg" alt="Network graph" class="block w-full rounded" /></a>
+        <figcaption class="text-xs text-gray-400 mt-1">Knowledge gained -100%, Vitamin C +60%.</figcaption>
       </figure>
       <p class="text-sm leading-relaxed mb-4">To console myself, I added three new modest features:</p>
       <ul class="flex flex-col gap-4 mb-4">
@@ -104,10 +105,11 @@
       </ul>
       <figure class="my-6">
         <a href="/railway.png" target="_blank" rel="noopener noreferrer"><img src="/railway.png" alt="Railway deployment dashboard" class="block w-full rounded" /></a>
+          <figcaption class="text-xs text-gray-400 mt-1">I tried to avoid it for as long as I could but someone at Journocoders told me that the world secretly runs on SQL.</figcaption>
       </figure>
       <ul class="flex flex-col gap-4 mb-4">
         <li class="text-sm leading-relaxed">
-          <span class="font-bold">AI Similarity Score:</span> No modern software project in 2026 is complete without a pointless AI feature. This 100% vibe-coded AI Similarity Score is my take. It extracts the event-slugs returned via the activity API, and sends them to the <a class="underline" href="https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2" target="_blank" rel="noopener noreferrer">Hugging Face MiniLM sentence-transformer</a>, which then evaluates how similar or divergent the event-slugs are. 0 means totally different and 1 means they're exactly the same. The principles of how it works… are a complete mystery to me, but I am happy to report that Polywatcher's share price has increased by 600% since integrating Agentic AI into our workflow.
+          <span class="font-bold">AI Similarity Score:</span> No modern software project is complete without a pointless AI feature. This 100% vibe-coded AI Similarity Score is my take. It extracts the event-slugs returned via the activity API, and sends them to the <a class="underline" href="https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2" target="_blank" rel="noopener noreferrer">Hugging Face MiniLM sentence-transformer</a>, which then evaluates how similar or divergent the event-slugs are. 0 means totally different and 1 means they're exactly the same. The principles of how it works… are a complete mystery to me, but I am happy to report that Polywatcher's share price has increased by 600% since integrating Agentic AI into our workflow.
         </li>
       </ul>
       <p class="text-sm leading-relaxed">
@@ -132,7 +134,7 @@
         Ultimately, it depends on your end goal. If you just want a headline like 'Some Dude made $150,000 betting on Keir Starmer calling Badenoch a cunt in Parliament', Polymarket can get you there. If you want a more thorough investigation into sustained insider trading, scams targeting gullible under-21s or frontrunning by HFTs, then it's at best a starting point. My mathematics isn't good enough. I cannot write the algorithms to catch the charlatans in action.
       </p>
       <p class="text-sm leading-relaxed">
-        However, I don't think it's been a wasted journey because of what I've learned and gained in the process. Returning from Polywatcher to my Jupyter Notebook investigations feels like doing the Stairmaster after a half-Marathon. Whatever might come of this Sandbox project, at least it has served its purpose in expanding my brain. Happy investigating.
+        That being said, I don't think it's been a wasted journey because of what I've learned and gained in the process. Returning from Polywatcher to my Jupyter Notebook investigations feels like doing the Stairmaster after a half-Marathon. Whatever might come of this Sandbox project, at least it has served its purpose in expanding my brain. Happy investigating.
       </p>
     </article>
 
