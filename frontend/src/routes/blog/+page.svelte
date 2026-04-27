@@ -46,6 +46,9 @@
         <a href="/polymarketv1.png" target="_blank" rel="noopener noreferrer"><img src="/polymarketv1.png" alt="Polywatcher v1" class="block w-full rounded" /></a>
         <figcaption class="text-xs text-gray-400 mt-1">Polywatcher v1, running on Jinja2Templates, with just one source of data and no UI. Circa-2002 War on Terror aesthetics entirely accidental.</figcaption>
       </figure>
+       <p class="text-sm leading-relaxed mb-4">
+       I wish I could do more in-depth research into how insider tradiing detection on Polymarket but the entire field is relatively new. There were no well-worn grooves to follow, or established best practices to consult, even though I did consult with the founder of <a class="underline" href="https://www.chainargos.com" target="_blank" rel="noopener noreferrer">Chain Argos</a>. As inspiration, I studied other formative Polymarket apps like <a class="underline" href="https://hashdive.com" target="_blank" rel="noopener noreferrer">Hashdive</a> and <a class="underline" href="https://github.com/pselamy/polymarket-insider-tracker" target="_blank" rel="noopener noreferrer">Insider-tracker</a>, but I'll be the first to admit: This is a work in progress, not a finished product. Whatever you see here is the result of my thinking, rather than a well-established methodology.
+      </p>
     </article>
 
     <div class="divider"></div>
