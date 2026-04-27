@@ -170,6 +170,9 @@
     <p class="font-bold">Creation/Cashout Gap</p>
     <p class="text-sm mb-3">Days elapsed between account creation and a redemption of more than $10,000. The shorter the gap, the higher the risk.</p>
     <div class="divider"></div>
+    <p class="font-bold">Creation/Volume</p>
+    <p class="text-sm mb-3">Uses the Polygonscan API to find the wallet's first known on-chain activity, then sums all BUY trades placed within the first 48 hours of that date. A high volume of early trades suggests a fresh wallet trading aggressively from the outset.</p>
+    <div class="divider"></div>
     <p class="font-bold">Volume/Redemption Ratio</p>
     <p class="text-sm mb-3">Compares the value of redemptions against the number of positions. A large volume of redemptions across few positions indicates higher risk.</p>
     <div class="divider"></div>
@@ -178,6 +181,9 @@
     <div class="divider"></div>
     <p class="font-bold">Success Rate</p>
     <p class="text-sm mb-3">Fewer than 30% of all Polymarket users make a profit. Compares wins and losses to gauge whether the user is unusually successful.</p>
+    <div class="divider"></div>
+    <p class="font-bold">Proximity Analysis</p>
+    <p class="text-sm mb-3">Shows the three markets where the wallet has concentrated the most dollar activity. A high share of total volume in a single market — particularly a niche or political one — is a flag for potential insider knowledge.</p>
     <div class="divider"></div>
     <p class="font-bold">Position Size</p>
     <p class="text-sm mb-3">Checks whether the user has taken positions that are unusually large compared to their average position size.</p>
