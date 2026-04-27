@@ -9,9 +9,9 @@
 
   <div class="flex flex-col gap-6">
 
-    <div>
+    <div class="py-2">
       <p class="text-sm leading-relaxed mb-4">
-        Polywatcher was created because I wanted to learn about APIs, Python and data. Since <strong>[redacted]</strong> has forbidden the heresy of app development for my Goldsmiths final project, I thought it best to save my JS D3 scrollytelling ambitions for summertime.
+        Polywatcher was started because I wanted to learn about APIs, Python and data. Since <strong>[redacted]</strong> has forbidden the heresy of app development for my Goldsmiths final project, I decided to build it for Sandbox and save my D3 scrolly-telling masterpiece for summertime.
       </p>
       <p class="text-sm leading-relaxed">
         My fascination with prediction markets began in November last year. I learned via X—quite by accident—that some members of <a class="underline" href="https://finance.yahoo.com/news/nigel-farage-adviser-reportedly-whale-130215468.html?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAAeQHReo_asYbCF1H19jWGJmS3rbe-MVMdI-y873CuQXpNcKyzlDKQxTIUkG1jeBMKONaKLAQb4aJfe_wRF4yk90DmUVPm5js5aIDY5R8xBhSJZpRwA5eM5vZsLzx4_EcEEcr6Ms2JXNAcm10ymJCa_aJkcSjVlwxw8SDcndXIyN"> Nigel Farage's inner circle </a> had allegedly made a lot of money betting on USA political outcomes. The shock of discovering that Reform were not incorruptible paragons of financial virtue made me fall to my knees in the Sainsburys biscuit aisle. It was truly disgusting; the way they misuse the funds entrusted to them by hardworking taxpayers in <a class="underline" href="https://bylinetimes.com/2025/12/16/nigel-farages-9m-donor-profits-from-putin-propaganda-platform-while-holding-mod-stake/" target="_blank" rel="noopener noreferrer">Russia</a> and the <a class="underline" href="https://www.theguardian.com/politics/2026/jan/29/nigel-farage-dubai-united-arab-emirates-reform-uk" target="_blank" rel="noopener noreferrer">UAE</a>.
@@ -21,29 +21,29 @@
     <div class="divider"></div>
 
     <article>
-      <h2 class="text-xl font-black mb-4">Phase 1: Learning, v1</h2>
+      <h2 class="text-xl font-black mb-4">Phase 1: Learning, v1, FastAPI</h2>
       <p class="text-sm leading-relaxed mb-4">
-        To kick off this journey, I learned basic Python from a YouTuber named <a class="underline" href="https://www.youtube.com/@BroCodez" target="_blank" rel="noopener noreferrer">Brocode</a> because his videos are simple and I am rather dumb. <a class="underline" href="https://www.youtube.com/watch?v=0sOvCWFmrtA" target="_blank" rel="noopener noreferrer">Corey Schafer's FastAPI tutorials</a> was chosen over Next.js for the same reason—so I could practice my Python a little more. All in all, I managed about 60 hours of grinding problems in Feb before I had to stop and catch up with schoolwork:
+        To kick off this journey, I learned basic Python from a YouTuber named <a class="underline" href="https://www.youtube.com/@BroCodez" target="_blank" rel="noopener noreferrer">Brocode</a> because his videos are simple and I am rather dumb. <a class="underline" href="https://www.youtube.com/watch?v=0sOvCWFmrtA" target="_blank" rel="noopener noreferrer">Corey Schafer's FastAPI tutorials</a> was chosen over Next.js for the same reason—so I could practice my Python. All in all, I managed about 60 hours of grinding problems in Feb before I had to stop and catch up with schoolwork:
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/vscode.png" target="_blank" rel="noopener noreferrer"><img src="/vscode.png" alt="VSCode with Python exercises" class="block w-full rounded" /></a>
         <figcaption class="text-xs text-gray-400 mt-1">Sadly, I might have forgotten a lot of JS in the process.</figcaption>
       </figure>
       <p class="text-sm leading-relaxed mb-4">
         The toughest part of this phase was bridging the gap between the tutorial world and real world. Looping over a [apple, orange, banana, monkey] is vastly less complicated than unpacking a nested JSON object where the numbers are strings, the strings are Booleans, and the API documentation doesn't tell you whether if asc=false until you scroll halfway to South Africa.
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/restfox.png" target="_blank" rel="noopener noreferrer"><img src="/restfox.png" alt="Restfox API testing" class="block w-full rounded" /></a>
         <figcaption class="text-xs text-gray-400 mt-1">Figuring out what data gets returned and how it might be useful.</figcaption>
       </figure>
       <p class="text-sm leading-relaxed mb-4">
-        Polymarket's blockchain jargon added another layer of difficulty. What on earth was 'contractAddress'? What's difference between 'endDate' and 'timestamp' on the closed-positions API endpoint? What is the difference between an event and a market? The learning curve was steep but I eventually figured out how to decipher the wall-of-text, filter by "side" or "eventId", int the relevant var, and return the relevant value by adding total +=.
+        Polymarket's blockchain jargon added another layer of difficulty. What on earth was 'contractAddress'? What's difference between 'endDate' and 'timestamp' on the closed-positions API endpoint? What is the difference between an event and a market? The learning curve was steep but I eventually figured out how to decipher the wall-of-text, filter by "side" or "eventId", int the relevant var, and return the relevant total by +=.
       </p>
       <p class="text-sm leading-relaxed mb-4">
         The first prototype was made using just FastAPI + Jinja. It examined the age of a wallet, the amount of activity in the first 48 hours, and which markets the wallet was trading in. All simple stuff, but it was such a relief to see data being returned on the page, even if it looked like Craigslist.
 
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/polymarketv1.png" target="_blank" rel="noopener noreferrer"><img src="/polymarketv1.png" alt="Polywatcher v1" class="block w-full rounded" /></a>
         <figcaption class="text-xs text-gray-400 mt-1">Polywatcher v1, running on Jinja2Templates, with just one source of data and no UI. Circa-2002 War on Terror aesthetics entirely accidental.</figcaption>
       </figure>
@@ -54,22 +54,22 @@
     <article>
       <h2 class="text-xl font-black mb-4">Phase 2: Airwars, Tailwind, Github, Daisy UI, Railway Deployment</h2>
       <p class="text-sm leading-relaxed mb-4">
-        My original plan was to slowly refine my Python analysis code till April, then build a beautiful frontend using <a class="underline" href="https://carbondesignsystem.com" target="_blank" rel="noopener noreferrer">IBM Carbon</a>. Unfortunately, this leisurely plan was derailed by me securing an interview with <a class="underline" href="https://airwars.org" target="_blank" rel="noopener noreferrer">Airwars</a>. Not wanting to show up at my interview with fizzbuzz.py or a Temu AOL website, I started panic-coding a presentable skin over the Python skeleton.
+        My original plan was to slowly refine my Python analysis code till April, then build a beautiful frontend using <a class="underline" href="https://carbondesignsystem.com" target="_blank" rel="noopener noreferrer">IBM Carbon</a>. Unfortunately, this leisurely plan was derailed by me securing an interview with <a class="underline" href="https://airwars.org" target="_blank" rel="noopener noreferrer">Airwars</a>. Not wanting to show up at my meeting with fizzbuzz.py or a Temu AOL website, I started panic-coding a presentable skin over the Python skeleton.
       </p>
       <p class="text-sm leading-relaxed mb-4">
-        Svelte was chosen because inspect informed me that it was Airwars' preferred JS framework. It was a decision I immediately regretted because the learning curve was—in my opinion—much steeper than python and completely at odds with how I thought JS worked.
+        Svelte was chosen because Github informed me that it was Airwars' preferred JS framework. It was a decision I immediately regretted because the learning curve was steep. Much steeper than python and completely at odds with how I thought JS worked.
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/airwars.png" target="_blank" rel="noopener noreferrer"><img src="/airwars.png" alt="Airwars website" class="block w-full rounded" /></a>
         <figcaption class="text-xs text-gray-400 mt-1">Probably the wrong kind of OSINT investigation, but who can resist in this economy.</figcaption>
       </figure>
       <p class="text-sm leading-relaxed mb-4">
-        The {`{if}`} {`{else}`} blocks were at least somewhat familiar. The most confusing part was the file structure, which continues to make zero sense for me. I do not understand why tailwindcss was loaded via vite.config.js while the data was loaded through page.server.js. Neither do I fully get the need for app.html as a separate file, while other bits of html sat individually under /routes.
+        The {`{if}`} {`{else}`} blocks were at least somewhat familiar. The most confusing part was the file structure, which made zero sense. I do not understand why tailwindcss was loaded via vite.config.js while the data was loaded through page.server.js. Neither do I fully get the need for app.html as a separate file, while other bits of html sat individually under /routes.
       </p>
       <p class="text-sm leading-relaxed mb-4">
-        As a result, a heavy dose of Claude was used. Individual components like &lt;let activeTab= $state(1)&gt; were coded by me. The actual structure was helped along by AI. Luckily, the visual elements like Tailwind and DaisyUI were not too different from last semester's UIKit adventures. I just had to read the documentation and mess about for a somewhat serviceable result.
+        As a result, a heavy dose of Claude was needed. Individual components like &lt;let activeTab= $state(1)&gt; were coded by me. The actual structure was helped along by AI. Luckily, the visual elements like Tailwind and DaisyUI were not too different from last semester's UIKit adventures. I just had to read the documentation and mess about for a somewhat serviceable result.
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/github.png" target="_blank" rel="noopener noreferrer"><img src="/github.png" alt="Github commits" class="block w-full rounded" /></a>
       </figure>
       <p class="text-sm leading-relaxed">
@@ -82,7 +82,7 @@
     <article>
       <h2 class="text-xl font-black mb-4">Phase 3: Hiatus</h2>
       <p class="text-sm leading-relaxed">
-        Very little happened in April while I learned pandas, edited my documentary and gained weight by stress-eating McDonalds dairy.
+        Very little happened in April while I learned pandas, edited my documentary and gained weight by stress-eating McDonalds.
       </p>
     </article>
 
@@ -91,24 +91,24 @@
     <article>
       <h2 class="text-xl font-black mb-4">Phase 4: Postgres, SQLAlchemy, Async, Pandas, NetworkX and Vibe-coding</h2>
       <p class="text-sm leading-relaxed mb-4">
-        For April, my original ambition was to create a graph network analysis using the <a class="underline" href="https://polygonscan.com" target="_blank" rel="noopener noreferrer">Polygonscan</a> blockchain API. It would reveal if multiple wallets are coordinating trades on the same market, and if they are funnelling the proceeds towards the same ultimate beneficiary. In fact, I even attended a Goldsmiths blockchain seminar to understand more about the blockchain.
+        For April, my ambition was to create a graph network analysis using the <a class="underline" href="https://polygonscan.com" target="_blank" rel="noopener noreferrer">Polygonscan</a> blockchain API. It would reveal if multiple wallets are coordinating trades on the same market, and if they are funnelling the proceeds towards the same ultimate beneficiary. In fact, I even attended a Goldsmiths blockchain seminar to understand more about the nitty-gritty of web3.
       </p>
       <p class="text-sm leading-relaxed mb-4">
-        Unfortunately, I'll have to leave this one to Palantir because the sheer amount of data necessary will break Polywatcher and reduce me to tears. To return a list of wallets linked to the profile is perfectly possible. However, to check every wallet our profile has touched against every market our suspected insider is trading in would result in thousands of synchronous API calls in a rate-limited environment. A real software engineer could find a way, but I was too cowardly to return 100 JSON objects at the same time, analyse their links and visualize the whole hairball with NetworkX.
+        Unfortunately, I'll have to leave this one to <a class="underline" href="https://investors.palantir.com/news-details/2026/Polymarket-Partners-With-Palantir-and-TWG-AI-to-Build-Next-generation-Sports-Integrity-Platform/" target="_blank" rel="noopener noreferrer">Palantir</a> because the sheer amount of data necessary will break Polywatcher and reduce me to tears. To return a list of wallets linked to the profile is perfectly possible. However, to check every wallet our profile has touched against every market our suspected insider is trading in would result in thousands of synchronous API calls in a rate-limited environment. A real software engineer could find a way, but I was too cowardly to return 100 JSON objects at the same time, analyse their links and visualize the whole hairball with NetworkX.
       </p>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/orange.jpeg" target="_blank" rel="noopener noreferrer"><img src="/orange.jpeg" alt="Network graph" class="block w-full rounded" /></a>
       </figure>
-      <p class="text-sm leading-relaxed mb-4">To console myself, I added three modest features:</p>
+      <p class="text-sm leading-relaxed mb-4">To console myself, I added three new modest features:</p>
       <ul class="flex flex-col gap-4 mb-4">
         <li class="text-sm leading-relaxed">
-          <span class="font-bold">Creation/Volume + Proximity Analysis:</span> These metrics chain together multiple sequential API calls for a more advanced analysis. Creation/Volume, for example, uses the <a class="underline" href="https://polygonscan.com" target="_blank" rel="noopener noreferrer">Polygonscan</a> API to find the wallet's first known activity. This start-date extracted from Polygon is then used to fetch and sum 'BUY' activity for the first 48 hours of the wallet. The aim is to detect if the profile is 'fresh wallets' that are trading aggressively.
+          <span class="font-bold">Creation/Volume + Proximity Analysis:</span> These metrics chain together multiple sequential API calls for a more advanced analysis. Creation/Volume, for example, uses the <a class="underline" href="https://polygonscan.com" target="_blank" rel="noopener noreferrer">Polygonscan</a> API to find the wallet's first known activity. This start-date extracted from the Polygon blockchain is then used to fetch and sum 'BUY' activity for the first 48 hours of the wallet. The aim is to detect if the profile is 'fresh wallets' that are trading aggressively.
         </li>
         <li class="text-sm leading-relaxed">
-          <span class="font-bold">SQL Database/Leaderboard:</span> Leaderboard uses the <a class="underline" href="https://polymarket.com" target="_blank" rel="noopener noreferrer">Polymarket</a> leaderboard API to return the top-performing wallets every day—sorted by Pnl. These wallets are stored in my Postgres database and analysed sequentially for the risk of insider trading. I was reluctant to add SQL but it felt like the most only sensible solution at this stage. The amount of data generated was increasingly at a rapid rate as I designed new features like Leaderboard or Politics pages. Storing them as local variables didn't feel like a scalable long term solution.
+          <span class="font-bold">SQL Database/Leaderboard:</span> Daily Leaderboard uses the Polymarket Leaderboard API to return the top-performing wallets every day—sorted by Pnl. These wallets are stored in my Postgres database and analysed sequentially for the risk of insider trading. I was reluctant to add SQL but it felt like the most only sensible solution at this stage. The amount of data generated was increasing at a rapid rate. If wanted to add new features which were data-intensive, I needed a way to store and query it without crashing the app.  
         </li>
       </ul>
-      <figure class="mb-4">
+      <figure class="my-6">
         <a href="/railway.png" target="_blank" rel="noopener noreferrer"><img src="/railway.png" alt="Railway deployment dashboard" class="block w-full rounded" /></a>
       </figure>
       <ul class="flex flex-col gap-4 mb-4">
@@ -132,7 +132,7 @@
         The short answer: Probably Not. There's a lot of noise on the prediction markets and Polywatcher is at best a blunt instrument. It gives you a snapshot of how certain wallets behaved on the market. It cannot—as yet—give you a fine-grained proof of an insider making it away with the big bucks and retiring in the Cayman Islands.
       </p>
       <p class="text-sm leading-relaxed mb-4">
-        Some traders appear on the leaderboard because they got lucky betting on Arsenal v. Man City. Their huge wins are the result of reckless confidence, not clairvoyant intuition. On the flipside, real insiders like the infamous Maduro Whale often do not trigger any of my metrics. Apart from a suspicious 95% similarity on market spread, his wallet looked like a completely normal chump account.
+        Some traders appear on the leaderboard because they got lucky betting on Arsenal v. Man City. Their huge wins are the result of reckless confidence, not uncanny clairvoyance. On the flipside, real insiders like the infamous <a class="underline" href="https://www.forbes.com/sites/digital-assets/2026/04/24/burdensome-mix-unmasked-soldier-charged-in-first-polymarket-case/" target="_blank" rel="noopener noreferrer">Maduro Whale</a> often do not trigger any of my metrics. Apart from a suspicious 95% similarity on market spread, his wallet looked like a completely normal chump account.
       </p>
       <p class="text-sm leading-relaxed mb-4">
         Ultimately, it depends on your end goal. If you just want a headline like 'Some Dude made $150,000 betting on Keir Starmer calling Badenoch a cunt in Parliament', Polymarket can get you there. If you want a more thorough investigation into sustained insider trading, scams targeting gullible teenagers or frontrunning by HFTs, then it's at best a starting point. My mathematics isn't good enough. I cannot write the algorithms to truly catch the charlatans in action.
