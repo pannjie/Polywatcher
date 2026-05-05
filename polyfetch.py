@@ -54,16 +54,22 @@ def get_start_date(chain_data, address):
 
 def find_closed_positions(closed_positions_data):
     df_1 = pd.json_normalize(closed_positions_data)
+    if df_1.empty or 'realizedPnl' not in df_1.columns:
+        return []
     df_1 = df_1.sort_values('realizedPnl', ascending=False)
     return df_1.head(3)['timestamp'].astype(int).tolist()
 
 def find_event_slug(closed_positions_data):
     df_1 = pd.json_normalize(closed_positions_data)
+    if df_1.empty or 'realizedPnl' not in df_1.columns:
+        return []
     df_1 = df_1.sort_values('realizedPnl', ascending=False)
     return df_1.head(3)['eventSlug'].tolist()
 
 def find_event_slug_all(closed_positions_data):
     df_1 = pd.json_normalize(closed_positions_data)
+    if df_1.empty or 'realizedPnl' not in df_1.columns:
+        return []
     df_1 = df_1.sort_values('realizedPnl', ascending=False)
     df_1 = df_1[df_1['realizedPnl'] > 0]
     return df_1['eventSlug'].tolist()
@@ -80,16 +86,16 @@ async def run_analysis(address: str):
     top_3_event_slug = find_event_slug(raw_closed)
     all_event_slug = find_event_slug_all(raw_closed)
 
-    creator, activity, positions, closed_positions, redemptions, pnl, activity_timed, *top_activity = await asyncio.gather(
+    creator, activity, positions, redemptions, activity_timed, *top_activity = await asyncio.gather(
         get_creator(address),
         get_activity(address),
         get_positions(address),
-        get_closed_positions(address),
         get_redemptions(address),
-        get_pnl(address),
         get_activity_2(address, start_date),
         *[get_activity_3(address, ts) for ts in top_3_timestamps]
     )
+    closed_positions = raw_closed
+    pnl = closed_positions
 
     spread_analysis = analyse_spread(positions, closed_positions)
     spread_risk = analyse_spread_risk(spread_analysis)
@@ -357,7 +363,7 @@ HF_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 hf_client = InferenceClient(api_key=HF_API_KEY)
 
 async def get_embeddings(texts: list[str]):
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     try:
         embeddings = await loop.run_in_executor(
             None,
@@ -408,8 +414,8 @@ def analyse_slug_similarity_risk(slug_similarity):
 #amended to avoid over-flagging of normal users.`
 ##todo: Amend Javascript for better understanding. + %`
 def analyse_spread(positions_data, closed_positions):
-    event_ids_1 = [position.get('eventId') for position in positions_data]
-    event_ids_2 = [position.get('eventId') for position in closed_positions]
+    event_ids_1 = [position.get('eventId') for position in positions_data if position.get('eventId')]
+    event_ids_2 = [position.get('eventId') for position in closed_positions if position.get('eventId')]
     final_ids = event_ids_1 + event_ids_2
     if final_ids == []:
         return 0
@@ -438,6 +444,8 @@ def get_timegap(redemptions_data, creator_data):
     if not redemptions_data:
         return None
     creator_time = creator_data.get('createdAt')
+    if not creator_time:
+        return None
     creator_time = datetime.datetime.fromisoformat(creator_time).timestamp()
 
     sorted_redemptions = sorted(redemptions_data, key=lambda x: x.get("timestamp", 0))
@@ -500,7 +508,7 @@ def analyse_volume_risk(value_redemptions, closed_positions, positions_data):
 def analyse_profits(pnl_data):
     total_profit = 0
     for pnl in pnl_data:
-        total_profit += int(pnl.get("realizedPnl") or 0) / 1e6
+        total_profit += float(pnl.get("realizedPnl") or 0)
     return total_profit
   
     
@@ -527,9 +535,9 @@ def analyse_success(pnl_data):
     success = 0
     failure = 0
     for pnl in pnl_data:
-        if int(pnl.get("realizedPnl") or 0) > 0:
+        if float(pnl.get("realizedPnl") or 0) > 0:
             success += 1
-        elif int(pnl.get("realizedPnl") or 0) < 0:
+        elif float(pnl.get("realizedPnl") or 0) < 0:
             failure += 1
     if success + failure == 0:
         return 0, 0, 0
@@ -559,7 +567,6 @@ def high_frequency_check(activity_data):
     verdict = " "
     for activity in activity_data:
         if activity.get('type') == "TRADE":
-            activity.get("timestamp")
             timestamps.append(activity.get("timestamp"))
     #loop through the timestamps and see if there are more than 10 trades with less than 1s apart.
     timestamps.sort()
@@ -718,7 +725,7 @@ def volume_gap(activity_data):
     df_1 = pd.json_normalize(activity_data)
     if 'side' not in df_1.columns:
         return 0
-    total_trades = df_1[df_1['side'] == 'BUY']['usdcSize'].sum()
+    total_trades = float(df_1[df_1['side'] == 'BUY']['usdcSize'].sum())
     return total_trades
 
 def volume_gap_risk(total_trades):
@@ -760,9 +767,9 @@ def analyse_top_activity(top_activity_data, top_3_event_slug):
     event_2 = top_3_event_slug[1] if len(top_3_event_slug) > 1 else None
     event_3 = top_3_event_slug[2] if len(top_3_event_slug) > 2 else None
 
-    total_1 = df_1[df_1['eventSlug'] == event_1]['usdcSize'].sum() if 'eventSlug' in df_1.columns else 0
-    total_2 = df_2[df_2['eventSlug'] == event_2]['usdcSize'].sum() if 'eventSlug' in df_2.columns else 0
-    total_3 = df_3[df_3['eventSlug'] == event_3]['usdcSize'].sum() if 'eventSlug' in df_3.columns else 0
+    total_1 = float(df_1[df_1['eventSlug'] == event_1]['usdcSize'].sum()) if 'eventSlug' in df_1.columns else 0
+    total_2 = float(df_2[df_2['eventSlug'] == event_2]['usdcSize'].sum()) if 'eventSlug' in df_2.columns else 0
+    total_3 = float(df_3[df_3['eventSlug'] == event_3]['usdcSize'].sum()) if 'eventSlug' in df_3.columns else 0
 
     return total_1, total_2, total_3
 

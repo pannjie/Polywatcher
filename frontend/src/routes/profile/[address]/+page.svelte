@@ -183,7 +183,7 @@
     <p class="text-sm mb-3">Fewer than 30% of all Polymarket users make a profit. Compares wins and losses to gauge whether the user is unusually successful.</p>
     <div class="divider"></div>
     <p class="font-bold">Proximity Analysis</p>
-    <p class="text-sm mb-3">Shows the three markets where the wallet has concentrated the most dollar activity. A high share of total volume in a single market — particularly a niche or political one — is a flag for potential insider knowledge.</p>
+    <p class="text-sm mb-3">Shows the three markets where the wallet has concentrated the most dollar activity. A high volume of trading just before the market closes reflects a higher risk.</p>
     <div class="divider"></div>
     <p class="font-bold">Position Size</p>
     <p class="text-sm mb-3">Checks whether the user has taken positions that are unusually large compared to their average position size.</p>
