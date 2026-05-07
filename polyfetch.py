@@ -535,13 +535,18 @@ def analyse_success(pnl_data):
     success = 0
     failure = 0
     for pnl in pnl_data:
-        if float(pnl.get("realizedPnl") or 0) > 0:
+        raw = pnl.get("realizedPnl")
+        if raw is None:
+            continue
+        val = float(raw)
+        if val > 0:
             success += 1
-        elif float(pnl.get("realizedPnl") or 0) < 0:
+        else:
+            # realizedPnl == 0 means position expired worthless (losing side)
             failure += 1
     if success + failure == 0:
         return 0, 0, 0
-    success_rate = success / (success + failure)* 100
+    success_rate = success / (success + failure) * 100
     return success_rate, success, failure
 
 
