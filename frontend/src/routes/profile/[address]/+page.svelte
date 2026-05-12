@@ -102,7 +102,7 @@
 
                 <tr><td>Market Spread</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_analysis}%</td><td style="background-color:{getColour(data.spread_risk)}">{data.spread_risk}</td></tr>
 
-                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap} Days</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
+                <tr><td>Creation/Cashout Gap</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap != null ? data.time_gap + ' Days' : 'N/A'}</td><td style="background-color:{getColour(data.time_gap_risk)}">{data.time_gap_risk}</td></tr>
 
 
                 <tr><td>Creation/Volume</td><td style="background-color:{getColour(data.volume_48hr_risk)}">${data.volume_48hr}</td><td style="background-color:{getColour(data.volume_48hr_risk)}">{data.volume_48hr_risk}</td></tr>
@@ -112,7 +112,7 @@
 
                 <tr><td>Profit/loss</td><td style="background-color:{getColour(data.profit_risk)}">${data.total_profit}</td><td style="background-color:{getColour(data.profit_risk)}">{data.profit_risk}</td></tr>
 
-                <tr><td>Success rate</td><td style="background-color:{getColour(data.success_risk)}">{data.success_rate}% ({data.success_count}W / {data.failure_count}L)</td><td style="background-color:{getColour(data.success_risk)}">{data.success_risk}</td></tr>
+                <tr><td>Success rate</td><td style="background-color:{getColour(data.success_risk)}">{data.success_count + data.failure_count > 0 ? data.success_rate + '% (' + data.success_count + 'W / ' + data.failure_count + 'L)' : 'N/A'}</td><td style="background-color:{getColour(data.success_risk)}">{data.success_risk}</td></tr>
 
                 <tr>
                   <td rowspan="3">Proximity Analysis</td>

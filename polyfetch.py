@@ -449,7 +449,7 @@ def get_timegap(redemptions_data, creator_data):
     creator_time = datetime.datetime.fromisoformat(creator_time).timestamp()
 
     sorted_redemptions = sorted(redemptions_data, key=lambda x: x.get("timestamp", 0))
-    first_redemption = next((redemption for redemption in sorted_redemptions if redemption.get("usdcSize", 0) > 10000), None)
+    first_redemption = sorted_redemptions[0] if sorted_redemptions else None
 
     if first_redemption is None:
         return None
@@ -536,14 +536,23 @@ def analyse_success(pnl_data):
     failure = 0
     for pnl in pnl_data:
         raw = pnl.get("realizedPnl")
-        if raw is None:
-            continue
-        val = float(raw)
-        if val > 0:
-            success += 1
+        if raw is not None:
+            val = float(raw)
+            if val > 0:
+                success += 1
+            else:
+                failure += 1
         else:
-            # realizedPnl == 0 means position expired worthless (losing side)
-            failure += 1
+            # realizedPnl null in closed-positions API: use currentValue as proxy
+            # currentValue > 0 means position still has value (won), 0 means expired worthless (lost)
+            size = float(pnl.get("size") or 0)
+            if size == 0:
+                continue
+            current_value = float(pnl.get("currentValue") or 0)
+            if current_value > 0:
+                success += 1
+            else:
+                failure += 1
     if success + failure == 0:
         return 0, 0, 0
     success_rate = success / (success + failure) * 100
