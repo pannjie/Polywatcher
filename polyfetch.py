@@ -44,7 +44,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def health():
-    return {"status": "ok"}
+    return {"status": "okay"}
 
 def get_start_date(chain_data, address):
     for tx in chain_data.get("result", []):
